@@ -29,11 +29,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = 'core.interface.urls'
 LOGIN_REDIRECT_URL = '/'
-DIR_TEMPLATES = os.path.join(BASE_DIR, 'templates')
+DIR_TEMPLATES = os.path.join(BASE_DIR, 'interface/templates')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'interface/static/')]
 
 TEMPLATES = [
     {
@@ -51,7 +51,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = 'core.config.wsgi.application'
 
 DB_ENGINE = os.getenv('DJANGO_DB_ENGINE')
 DB_USER = os.getenv('MYSQL_DB_USER')
