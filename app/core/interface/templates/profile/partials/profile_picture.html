@@ -1,0 +1,11 @@
+{% load static %}
+<div class="col-md-4 text-center">
+    <img src="{% static 'profile/profile.png' %}" class="profile-img" alt="Profile Image">
+    <h3>{{ user.username }}</h3>
+    <p>This page is your private space.</p>
+    <div>
+        <a href="#" class="text-secondary"><i class="fa fa-twitter"></i></a>
+        <a href="#" class="text-secondary"><i class="fa fa-facebook"></i></a>
+        <a href="#" class="text-secondary"><i class="fa fa-instagram"></i></a>
+    </div>
+</div>

@@ -16,7 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
- 
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -30,7 +30,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.interface.urls'
-LOGIN_REDIRECT_URL = '/'
+AUTH_USER_MODEL = 'core.CustomUser'
+LOGIN_REDIRECT_URL = '/profile/'
+LOGIN_URL = '/login/'
 DIR_TEMPLATES = os.path.join(BASE_DIR, 'interface/templates')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'interface/static/')]
@@ -46,6 +48,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
             ],
         },
     },
@@ -101,3 +104,10 @@ USE_I18N = True
 USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DJANGO_SECURITY_PASSWORD_FAILURE_LIMIT = 5
+DJANGO_SECURITY_PASSWORD_FAILURE_TIMEOUT = 900  
+DJANGO_SECURITY_REPLAY_PROTECTION_ENABLED = True
+DJANGO_SECURITY_SESSION_EXPIRATION = 1800  
+DJANGO_SECURITY_SESSION_AGE = 86400  
+

@@ -1,0 +1,57 @@
+{% extends 'base/layout.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block styles %}
+    
+        body {
+            background-color: #f0f4f8;
+        }
+        .navbar {
+            background-color: #343a40; 
+        }
+        .navbar .nav-link, .navbar .navbar-brand {
+            color: #ffffff; 
+        }
+        .navbar .nav-link:hover {
+            color: #d1d1d1; 
+        }
+        .container-content {
+            padding: 2rem;
+            margin-top: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    
+{% endblock %} 
+
+{% block body%} 
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Django Binance Trader</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login/">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register/">Register</a>                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="container-content">
+            {% block content %}
+            <h1>Welcome to Django Binance Trader</h1>
+            <p>This is your dashboard. Use the navigation bar to access different sections of the application.</p>
+            {% endblock %}
+        </div>
+    </div>
+
+{%block footer%} {% include 'base/partials/base_footer.html' %}{%endblock%}
+{% endblock %}
