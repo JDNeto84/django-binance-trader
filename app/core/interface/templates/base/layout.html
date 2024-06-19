@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'base/partials/base_head.html' %}
+    
+    <title>Binance Trader - {% block title %}{% endblock %}</title>
+
+    <style>
+        {% include 'base/partials/base_style.html' %}
+        {% block styles %}{% endblock %}
+    </style>
+</head>
+
+<body>
+{% block body%} 
+    {% include 'base/partials/base_sidebar.html' %}    
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 content">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">{% block h1 %}{% endblock %}</h1>
+        </div>
+        <div class="profile-box">
+            <div class="row">
+                
+                    {% block row %}{% endblock %}
+                
+            </div>
+        </div>
+
+        {% include 'base/partials/base_footer.html' %}
+    </main>
+
+    {% include 'base/partials/base_scripts.html' %}
+{% endblock %}
+</body>
+
+</html>
