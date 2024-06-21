@@ -1,0 +1,236 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "ECS Cluster for Django Application with Resources"
+
+Parameters:
+  DockerImage:
+    Type: "String"
+    Description: "The Docker image URL"    
+
+  DjangoSecretKey:
+    Type: "String"
+    Description: "Django Secret Key"
+    NoEcho: true  
+
+  MysqlDbPass:
+    Type: "String"
+    Description: "MySQL Database Password"
+    NoEcho: true  
+
+  BinanceTestNetKey:
+    Type: "String"
+    Description: "Binance TestNet API Key"
+    NoEcho: true  
+
+  BinanceTestNetSecret:
+    Type: "String"
+    Description: "Binance TestNet Secret"
+    NoEcho: true
+
+  BinanceTestNetUrl:
+    Type: "String"
+    Description: "Binance TestNet URL"  
+
+  DjangoAllowedHosts:
+    Type: "String"
+    Description: "Django Allowed Hosts"
+
+  DjangoDebug:
+    Type: "String"
+    Description: "Django Debug"
+
+  DjangoEngine:
+    Type: "String"
+    Description: "Django Engine"
+  
+  DjangoMysqlDbHost:
+    Type: "String"
+    Description: "Django MySQL DB Host"
+  
+  DjangoMysqlDbName:
+    Type: "String"
+    Description: "Django MySQL DB Name"
+
+  DjangoMysqlDbPort:
+    Type: "String"
+    Description: "Django Mysql DB Port"
+  
+  DjangoMysqlDbUser:
+    Type: "String"
+    Description: "Django MySQL DB User"
+
+Resources:
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: "Name"
+          Value: "DjangoVPC"
+
+  Subnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: "10.0.0.0/29"
+      MapPublicIpOnLaunch: "true"
+      AvailabilityZone: !Select [0, !GetAZs ""]
+
+  InternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+
+  VPCGatewayAttachment:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  RouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref VPC
+
+  Route:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref InternetGateway
+
+  SubnetRouteTableAssociation:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref Subnet
+      RouteTableId: !Ref RouteTable
+
+  SecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: "Allow access to ECS services"
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: 443
+          ToPort: 443
+          CidrIp: "0.0.0.0/0"
+
+  ECSCluster:
+    Type: "AWS::ECS::Cluster"
+    Properties:
+      ClusterName: "DjangoECSCluster"
+
+  ECSLogGroup:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: "/ecs/django"
+      RetentionInDays: 14
+
+  ECSRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "ecs-tasks.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "ECSTaskPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "arn:aws:logs:*:*:*"
+
+  ECSTaskExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "ecs-tasks.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+
+  TaskDefinition:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      RequiresCompatibilities:
+        - "FARGATE"
+      Cpu: "256"
+      Memory: "512"
+      NetworkMode: "awsvpc"
+      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt ECSRole.Arn
+      ContainerDefinitions:
+        - Name: "django-container"
+          Image: !Ref "DockerImage"
+          Essential: true
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: !Ref ECSLogGroup
+              awslogs-region: !Ref "AWS::Region"
+              awslogs-stream-prefix: "ecs"
+          PortMappings:
+            - ContainerPort: 443
+          Environment:
+            - Name: DJANGO_SECRET_KEY
+              Value: !Ref "DjangoSecretKey"
+            - Name: DJANGO_DEBUG
+              Value: !Ref "DjangoDebug"
+            - Name: DJANGO_DB_ENGINE
+              Value: !Ref "DjangoEngine"
+            - Name: DJANGO_ALLOWED_HOSTS
+              Value: !Ref "DjangoAllowedHosts"
+            - Name: MYSQL_DB_HOST
+              Value: !Ref "DjangoMysqlDbHost"
+            - Name: MYSQL_DB_NAME
+              Value: !Ref "DjangoMysqlDbName"
+            - Name: MYSQL_DB_USER
+              Value: !Ref "DjangoMysqlDbUser"
+            - Name: MYSQL_DB_PASS
+              Value: !Ref "MysqlDbPass"
+            - Name: MYSQL_DB_PORT
+              Value: !Ref "DjangoMysqlDbPort"
+            - Name: BINANCE_TSTNET_URL
+              Value: !ref "BinanceTestNetUrl"
+            - Name: BINANCE_TSTNET_KEY
+              Value: !Ref "BinanceTestNetKey"
+            - Name: BINANCE_TSTNET_SECRET
+              Value: !Ref "BinanceTestNetSecret"
+
+  ECSService:
+    Type: "AWS::ECS::Service"
+    Properties:
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      LaunchType: "FARGATE"
+      TaskDefinition: !Ref TaskDefinition
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets:
+            - !Ref Subnet
+          SecurityGroups:
+            - !Ref SecurityGroup
+          AssignPublicIp: "ENABLED"
+
+Outputs:
+  ECSClusterName:
+    Value: !Ref ECSCluster
+    Export:
+      Name: "ECSClusterName"
+
+  ECSServiceName:
+    Value: !Ref ECSService
+    Export:
+      Name: "ECSServiceName"
+
