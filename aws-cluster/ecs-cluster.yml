@@ -32,7 +32,7 @@ Parameters:
 
   DjangoAllowedHosts:
     Type: "String"
-    Description: "Django Allowed Hosts"
+    Description: "['localhost', '127.0.0.1']"
 
   DjangoDebug:
     Type: "String"

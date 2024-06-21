@@ -33,8 +33,7 @@ jobs:
               MysqlDbPass=${{ secrets.MYSQL_DB_PASS }} \
               BinanceTestNetKey=${{ secrets.BINANCE_TSTNET_KEY }} \
               BinanceTestNetSecret=${{ secrets.BINANCE_TSTNET_SECRET }} \
-              BinanceTestNetUrl=${{ vars.BINANCE_TSTNET_URL }} \
-              DjangoAllowedHosts="${{ vars.DJANGO_ALLOWED_HOSTS }}" \
+              BinanceTestNetUrl=${{ vars.BINANCE_TSTNET_URL }} \              
               DjangoDebug=${{ vars.DJANGO_DEBUG }} \
               DjangoEngine=${{ vars.DJANGO_ENGINE }} \
               DjangoMysqlDbHost=${{ vars.MYSQL_DB_HOST }} \

@@ -2,6 +2,13 @@ name: Build and Push Image to DockerHub
 
 on:
   push:
+    paths:
+      - 'app/**'
+      - 'Dockerfile.prod'
+      - 'requirements.txt'
+      - 'nginx.conf'
+      - 'default.conf'
+      
     branches:
       - develop
 
