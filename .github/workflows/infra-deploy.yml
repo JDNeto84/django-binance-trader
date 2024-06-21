@@ -3,7 +3,7 @@ name: Deploy AWS Cluster
 on:
   push:
     paths:
-      - 'aws-cluster/**'
+      - 'aws/ecs-deploy.yml'
     branches:
       - develop
 
@@ -26,7 +26,7 @@ jobs:
       run: |
         aws cloudformation deploy \
           --stack-name django-ecs-cluster \
-          --template-file infrastructure/ecs-cluster.yml \
+          --template-file aws/ecs-deploy.yml \
           --parameter-overrides \              
               DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
               MysqlDbPass=${{ secrets.MYSQL_DB_PASS }} \
