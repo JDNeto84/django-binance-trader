@@ -32,12 +32,5 @@ jobs:
               MysqlDbPass=${{ secrets.MYSQL_DB_PASS }} \
               BinanceTestNetKey=${{ secrets.BINANCE_TSTNET_KEY }} \
               BinanceTestNetSecret=${{ secrets.BINANCE_TSTNET_SECRET }} \
-              BinanceTestNetUrl=${{ vars.BINANCE_TSTNET_URL }} \
-              DjangoDebug=${{ vars.DJANGO_DEBUG }} \
-              DjangoEngine=${{ vars.DJANGO_ENGINE }} \
-              DjangoMysqlDbHost=${{ vars.MYSQL_DB_HOST }} \
-              DjangoMysqlDbName=${{ vars.MYSQL_DB_NAME }} \
-              DjangoMysqlDbPort=${{ vars.MYSQL_DB_PORT }} \
-              DjangoMysqlDbUser=${{ vars.MYSQL_DB_USER }} \
           --capabilities CAPABILITY_N
     
