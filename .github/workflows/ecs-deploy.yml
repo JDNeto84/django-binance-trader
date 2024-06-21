@@ -31,4 +31,4 @@ jobs:
         context: .
         file: ./Dockerfile.prod
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/django-binance-trader:latest
+        tags: jdneto84/django-binance-trader:latest
