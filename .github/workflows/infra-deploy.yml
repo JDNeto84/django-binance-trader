@@ -1,0 +1,44 @@
+name: Deploy AWS Cluster
+
+on:
+  push:
+    paths:
+      - 'aws-cluster/**'
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Deploy CloudFormation stack
+      run: |
+        aws cloudformation deploy \
+          --stack-name django-ecs-cluster \
+          --template-file aws-cluster/ecs-cluster.yml \
+          --parameter-overrides \
+              DockerImage=${{ secrets.DOCKERHUB_USERNAME }}/django-binance-trader:latest \
+              DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
+              MysqlDbPass=${{ secrets.MYSQL_DB_PASS }} \
+              BinanceTestNetKey=${{ secrets.BINANCE_TSTNET_KEY }} \
+              BinanceTestNetSecret=${{ secrets.BINANCE_TSTNET_SECRET }} \
+              BinanceTestNetUrl=${{ vars.BINANCE_TSTNET_URL }} \
+              DjangoAllowedHosts=${{ vars.DJANGO_ALLOWED_HOSTS }} \
+              DjangoDebug=${{ vars.DJANGO_DEBUG }} \
+              DjangoEngine=${{ vars.DJANGO_ENGINE }} \
+              DjangoMysqlDbHost=${{ vars.MYSQL_DB_HOST }} \
+              DjangoMysqlDbName=${{ vars.MYSQL_DB_NAME }} \
+              DjangoMysqlDbPort=${{ vars.MYSQL_DB_PORT }} \
+              DjangoMysqlDbUser=${{ vars.MYSQL_DB_USER }} \
+          --capabilities CAPABILITY_NAMED_IAM
