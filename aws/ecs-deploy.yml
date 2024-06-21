@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "ECS Cluster for Django Application with Resource"
+Description: "ECS Cluster for Django Application with ResourceS"
 
 Parameters:
   DockerImage:
