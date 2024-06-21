@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push Image to DockerHub
 
 on:
   push:
@@ -28,6 +28,6 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: Dockerfile.prod
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/django-binance-trade:latest
