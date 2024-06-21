@@ -28,6 +28,6 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: Dockerfile.prod
+        context: ./Dockerfile.prod
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/django-binance-trade:latest
