@@ -1,13 +1,19 @@
-import os, ast
+import os
+import ast
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ['true', '1', 't']
-
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+ALLOWED_HOSTS = ast.literal_eval(os.environ.get('DJANGO_ALLOWED_HOSTS', "[]"))
 
-ALLOWED_HOSTS = ast.literal_eval(os.environ.get('DJANGO_ALLOWED_HOSTS', '[]')) 
+ROOT_URLCONF = 'core.interface.urls'
+AUTH_USER_MODEL = 'core.CustomUser'
+LOGIN_REDIRECT_URL = '/profile/'
+LOGIN_URL = '/login/'
+DIR_TEMPLATES = os.path.join(BASE_DIR, 'templates')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -28,14 +34,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-ROOT_URLCONF = 'core.interface.urls'
-AUTH_USER_MODEL = 'core.CustomUser'
-LOGIN_REDIRECT_URL = '/profile/'
-LOGIN_URL = '/login/'
-DIR_TEMPLATES = os.path.join(BASE_DIR, 'interface/templates')
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'interface/static/')]
 
 TEMPLATES = [
     {

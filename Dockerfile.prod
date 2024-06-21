@@ -1,0 +1,24 @@
+FROM python:alpine3.19
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /app
+COPY requirements.txt /app
+RUN pip install pip --upgrade && \
+    pip install --no-cache-dir -r requirements.txt
+COPY app /app
+
+ENV DJANGO_SECRET_KEY="django-insecure-n25y9@^wmbwk@)1(9&(oyi@2q0_c&qikvq@@hy0v4s=g4y#t+5"
+ENV DJANGO_DEBUG="True"
+ENV DJANGO_DB_ENGINE="!mysql" 
+ENV DJANGO_ALLOWED_HOSTS="['localhost', '127.0.0.1']"
+ENV MYSQL_DB_HOST="mysql"
+ENV MYSQL_DB_NAME="trader"
+ENV MYSQL_DB_USER="root"
+ENV MYSQL_DB_PASS="root"
+ENV MYSQL_DB_PORT="3306"
+ENV BINANCE_TSTNET_URL="https://testnet.binance.vision"
+ENV BINANCE_TSTNET_KEY="KQMwNJ1t2A0MA1YB95PtoaCG8qjFVLFC33WDZDZFjMtaQF8brGIErsGOTuQrOppn"
+ENV BINANCE_TSTNET_SECRET="e7SwH6Lh3s8Lkmhorc4fxoDLP4N8iU5vKSpNNiF2F79jvUhSSO0ppFAqytYgHqgV"
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
