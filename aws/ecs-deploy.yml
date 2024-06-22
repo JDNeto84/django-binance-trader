@@ -82,7 +82,7 @@ Resources:
     Type: "AWS::EC2::Subnet"
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: "10.0.0.0/29"
+      CidrBlock: "10.0.0.0/24"
       MapPublicIpOnLaunch: "true"
       AvailabilityZone: !Select [0, !GetAZs ""]
 
