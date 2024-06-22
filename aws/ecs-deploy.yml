@@ -5,68 +5,67 @@ Parameters:
   DockerImage:
     Type: "String"
     Description: "The Docker image URL"
-    Default: "jdneto84/django-binance-trader:latest"  
-    
+    Default: "jdneto84/django-binance-trader:latest"
 
   DjangoSecretKey:
     Type: "String"
     Description: "Django Secret Key"
-    NoEcho: true  
+    NoEcho: true
 
   MysqlDbPass:
     Type: "String"
     Description: "MySQL Database Password"
-    NoEcho: true  
+    NoEcho: true
 
   BinanceTestNetKey:
     Type: "String"
     Description: "Binance TestNet API Key"
-    NoEcho: true  
+    NoEcho: true
 
   BinanceTestNetSecret:
     Type: "String"
     Description: "Binance TestNet Secret"
-    NoEcho: true 
-    
+    NoEcho: true
+
   BinanceTestNetUrl:
     Type: "String"
     Description: "Binance TestNet URL"
-    Default: "https://testnet.binance.vision"  
+    Default: "https://testnet.binance.vision"
 
   DjangoAllowedHosts:
     Type: "String"
     Description: "Django Allow Hosts"
-    Default: "['localhost', '127.0.0.1']"  
+    Default: "['localhost', '127.0.0.1']"
 
   DjangoDebug:
     Type: "String"
     Description: "Django Debug"
-    Default: "True"  
+    Default: "True"
 
   DjangoEngine:
     Type: "String"
     Description: "Django Engine"
-     Default: "mysql"
-  
+    Default: "mysql"
+
   DjangoMysqlDbHost:
     Type: "String"
     Description: "Django MySQL DB Host"
-     Default: "mysql"
-  
+    Default: "mysql"
+
   DjangoMysqlDbName:
     Type: "String"
     Description: "Django MySQL DB Name"
-     Default: "trader"
+    Default: "trader"
 
   DjangoMysqlDbPort:
     Type: "String"
     Description: "Django Mysql DB Port"
-     Default: "3306"
-  
+    Default: "3306"
+
   DjangoMysqlDbUser:
     Type: "String"
     Description: "Django MySQL DB User"
-     Default: "root"
+    Default: "root"
 
 Resources:
   VPC:
