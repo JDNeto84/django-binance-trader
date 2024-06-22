@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "RDS MySQL Instance"
+
+Parameters:
+  DBInstanceIdentifier:
+    Type: String
+    Description: "Database instance identifier"
+    NoEcho: true
+
+  DBName:
+    Type: String
+    Description: "Database name"
+    NoEcho: true
+
+  DBUsername:
+    Type: String
+    Description: "Database master username"
+    NoEcho: true
+
+  DBPassword:
+    Type: String
+    Description: "Database master password"
+    NoEcho: true
+
+  DBAllocatedStorage:
+    Type: Number
+    Description: "The allocated storage size in gigabytes"
+    NoEcho: true
+
+  DBInstanceClass:
+    Type: String
+    Description: "Database instance class"
+    NoEcho: true
+
+
+  SubnetId1:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "First subnet ID for the DB subnet group"
+    NoEcho: true
+
+  SubnetId2:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Second subnet ID for the DB subnet group"
+    NoEcho: true
+
+  VPCId:
+    Type: "AWS::EC2::VPC::Id"
+    Description: "The ID of the VPC"
+    NoEcho: true
+
+Resources:
+  MySqlDBSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties: 
+      GroupDescription: "Allow access to RDS MySQL"
+      VpcId: !Ref VPCId
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0  # Frist moment
+
+  MySqlDBSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties: 
+      DBSubnetGroupDescription: "Subnet group for MySQL RDS"
+      SubnetIds: 
+        - !Ref SubnetId1
+        - !Ref SubnetId2
+
+  MySqlDBInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      AllocatedStorage: !Ref DBAllocatedStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      Engine: "MySQL"
+      EngineVersion: "8.0.35"
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBName: !Ref DBName
+      VPCSecurityGroups:
+        - !GetAtt MySqlDBSecurityGroup.GroupId
+      DBSubnetGroupName: !Ref MySqlDBSubnetGroup
+      PubliclyAccessible: false
+      MultiAZ: false
