@@ -32,7 +32,6 @@ Parameters:
     Description: "Database instance class"
     NoEcho: true
 
-
   SubnetId1:
     Type: "AWS::EC2::Subnet::Id"
     Description: "First subnet ID for the DB subnet group"
