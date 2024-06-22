@@ -3,18 +3,12 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: app-django
     command: >
       sh -c '
         if [ ! -f /app/manage.py ]; then
           django-admin startproject core .;
-        fi &&
-        if [ "$DJANGO_DB_ENGINE" = "mysql" ]; then
-          apk add --no-cache mariadb-connector-c-dev &&
-          apk add --no-cache --virtual .build-deps build-base mariadb-dev &&
-          pip install mysqlclient &&
-          apk del .build-deps;
         fi &&
         python manage.py runserver 0.0.0.0:80
       '
@@ -22,7 +16,7 @@ services:
       DJANGO_DEBUG: ${DJANGO_DEBUG}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DJANGO_DB_ENGINE: ${DJANGO_DB_ENGINE}
-      DJANGO_DMZ_HOSTS: ${DJANGO_DMZ_HOSTS}
+      DJANGO_DMZ_HOSTS: ${DJANGO_ALLOWED_HOSTS}
       MYSQL_DB_HOST: ${MYSQL_DB_HOST}
       MYSQL_DB_NAME: ${MYSQL_DB_NAME}
       MYSQL_DB_USER: ${MYSQL_DB_USER}
@@ -38,30 +32,29 @@ services:
       - app-trader
     ports:
       - "80:80"
-  # For use with DB MySQL
-  #   depends_on:
-  #     - mysql
+    depends_on:
+      - mysql
 
-  # mysql:
-  #   image: mysql:8.4
-  #   command: --innodb-use-native-aio=0
-  #   restart: always
-  #   container_name: app-mysql
-  #   networks:
-  #     - app-trader
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     MYSQL_DATABASE: ${MYSQL_DB_NAME}
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASS}
-  #   volumes:
-  #     - ./mysql/data:/var/lib/mysql
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_DB_PASS}", "--silent"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s    
+  mysql:
+    image: mysql:8.4
+    command: --innodb-use-native-aio=0
+    restart: always
+    container_name: app-mysql
+    networks:
+      - app-trader
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASS}
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_DB_PASS}", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s    
 
 networks:
   app-trader:
