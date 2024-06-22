@@ -45,8 +45,6 @@ Resources:
   MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
     Properties:
-      
-      LicenseModel": "general-public-license"
       DBInstanceIdentifier: "django-mysql-db"
       AllocatedStorage: 20
       DBInstanceClass: "db.t3.micro"
