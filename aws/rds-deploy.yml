@@ -5,12 +5,12 @@ Parameters:
   DBInstanceIdentifier:
     Type: String
     Description: "Database instance identifier"
-    NoEcho: true
+    NoEcho: false
 
   DBName:
     Type: String
     Description: "Database name"
-    NoEcho: true
+    NoEcho: false
 
   DBUsername:
     Type: String
@@ -25,7 +25,7 @@ Parameters:
   DBAllocatedStorage:
     Type: Number
     Description: "The allocated storage size in gigabytes"
-    NoEcho: true
+    Default: 20  
 
   DBInstanceClass:
     Type: String
@@ -35,24 +35,23 @@ Parameters:
   SubnetId1:
     Type: "AWS::EC2::Subnet::Id"
     Description: "First subnet ID for the DB subnet group"
-    NoEcho: true
 
   SubnetId2:
     Type: "AWS::EC2::Subnet::Id"
-    Description: "First subnet ID for the DB subnet group"
-    NoEcho: true
+    Description: "Second subnet ID for the DB subnet group"
 
   VPCId:
     Type: "AWS::EC2::VPC::Id"
     Description: "The ID of the VPC"
-    NoEcho: true
 
+Resources:
   MySqlDBSubnetGroup:
     Type: "AWS::RDS::DBSubnetGroup"
     Properties: 
       DBSubnetGroupDescription: "Subnet group for MySQL RDS"
       SubnetIds: 
         - !Ref SubnetId1
+        - !Ref SubnetId2
 
   MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
