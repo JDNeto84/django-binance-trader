@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "RDS MySQL Instance Test 1"
+Description: "RDS MySQL Instance Test 2"
 
 Parameters:
   DBInstanceIdentifier:
