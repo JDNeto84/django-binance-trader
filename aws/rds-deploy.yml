@@ -37,6 +37,11 @@ Parameters:
     Description: "First subnet ID for the DB subnet group"
     NoEcho: true
 
+  SubnetId2:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "First subnet ID for the DB subnet group"
+    NoEcho: true
+
   VPCId:
     Type: "AWS::EC2::VPC::Id"
     Description: "The ID of the VPC"
@@ -52,7 +57,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
-          CidrIp: 0.0.0.0/0  # Frist moment
+          CidrIp: 0.0.0.0/0
 
   MySqlDBSubnetGroup:
     Type: "AWS::RDS::DBSubnetGroup"
@@ -60,6 +65,7 @@ Resources:
       DBSubnetGroupDescription: "Subnet group for MySQL RDS"
       SubnetIds: 
         - !Ref SubnetId1
+        - !Ref SubnetId2
 
   MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
@@ -76,4 +82,12 @@ Resources:
         - !GetAtt MySqlDBSecurityGroup.GroupId
       DBSubnetGroupName: !Ref MySqlDBSubnetGroup
       PubliclyAccessible: false
-      MultiAZ: false
+      MultiAZ: true
+
+Outputs:
+  MySqlDBEndpoint:
+    Description: "MySQL DB endpoint"
+    Value: !GetAtt MySqlDBInstance.Endpoint.Address
+  MySqlDBPort:
+    Description: "MySQL DB port"
+    Value: !GetAtt MySqlDBInstance.Endpoint.Port
