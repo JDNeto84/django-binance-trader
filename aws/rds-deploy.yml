@@ -31,9 +31,6 @@ Parameters:
     Type: String
     Description: "Database instance class"
     Default: "db.t3.micro"
-    AllowedValues: 
-      - db.t3.micro
-      - db.t4g.micro
 
   SubnetId1:
     Type: "AWS::EC2::Subnet::Id"
