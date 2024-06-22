@@ -40,7 +40,6 @@ Resources:
       DBSubnetGroupDescription: "Subnet group for MySQL RDS"
       SubnetIds: 
         - !Ref SubnetId1
-        - !Ref SubnetId2
 
   MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
