@@ -26,39 +26,47 @@ Parameters:
   BinanceTestNetSecret:
     Type: "String"
     Description: "Binance TestNet Secret"
-    NoEcho: true
-
+    NoEcho: true 
+    
   BinanceTestNetUrl:
     Type: "String"
-    Description: "Binance TestNet URL"  
+    Description: "Binance TestNet URL"
+    Default: "https://testnet.binance.vision"  
 
   DjangoAllowedHosts:
     Type: "String"
-    Description: "['localhost', '127.0.0.1']"
+    Description: "Django Allow Hosts"
+    Default: "['localhost', '127.0.0.1']"  
 
   DjangoDebug:
     Type: "String"
     Description: "Django Debug"
+    Default: "True"  
 
   DjangoEngine:
     Type: "String"
     Description: "Django Engine"
+     Default: "mysql"
   
   DjangoMysqlDbHost:
     Type: "String"
     Description: "Django MySQL DB Host"
+     Default: "mysql"
   
   DjangoMysqlDbName:
     Type: "String"
     Description: "Django MySQL DB Name"
+     Default: "trader"
 
   DjangoMysqlDbPort:
     Type: "String"
     Description: "Django Mysql DB Port"
+     Default: "3306"
   
   DjangoMysqlDbUser:
     Type: "String"
     Description: "Django MySQL DB User"
+     Default: "root"
 
 Resources:
   VPC:
