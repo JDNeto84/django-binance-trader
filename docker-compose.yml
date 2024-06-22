@@ -3,20 +3,13 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
     container_name: app-django
-    command: >
-      sh -c '
-        if [ ! -f /app/manage.py ]; then
-          django-admin startproject core .;
-        fi &&
-        python manage.py runserver 0.0.0.0:80
-      '
     environment:
       DJANGO_DEBUG: ${DJANGO_DEBUG}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DJANGO_DB_ENGINE: ${DJANGO_DB_ENGINE}
-      DJANGO_DMZ_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
       MYSQL_DB_HOST: ${MYSQL_DB_HOST}
       MYSQL_DB_NAME: ${MYSQL_DB_NAME}
       MYSQL_DB_USER: ${MYSQL_DB_USER}
@@ -31,7 +24,8 @@ services:
     networks:
       - app-trader
     ports:
-      - "80:80"
+      - "443:443"
+      - "8000:8000"
     depends_on:
       - mysql
 
