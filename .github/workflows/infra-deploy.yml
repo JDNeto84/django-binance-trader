@@ -28,9 +28,9 @@ jobs:
           --stack-name django-ecs-cluster \
           --template-file aws/ecs-deploy.yml \
           --parameter-overrides \              
-              DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
-              MysqlDbPass=${{ secrets.MYSQL_DB_PASS }} \
-              BinanceTestNetKey=${{ secrets.BINANCE_TSTNET_KEY }} \
-              BinanceTestNetSecret=${{ secrets.BINANCE_TSTNET_SECRET }} \
+              DjangoSecretKey="${{ secrets.DJANGO_SECRET_KEY }}" \
+              MysqlDbPass="${{ secrets.MYSQL_DB_PASS }}" \
+              BinanceTestNetKey="${{ secrets.BINANCE_TSTNET_KEY }}" \
+              BinanceTestNetSecret="${{ secrets.BINANCE_TSTNET_SECRET }}" \
           --capabilities CAPABILITY_N
     
