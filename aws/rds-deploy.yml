@@ -37,11 +37,6 @@ Parameters:
     Description: "First subnet ID for the DB subnet group"
     NoEcho: true
 
-  SubnetId2:
-    Type: "AWS::EC2::Subnet::Id"
-    Description: "Second subnet ID for the DB subnet group"
-    NoEcho: true
-
   VPCId:
     Type: "AWS::EC2::VPC::Id"
     Description: "The ID of the VPC"
@@ -65,7 +60,6 @@ Resources:
       DBSubnetGroupDescription: "Subnet group for MySQL RDS"
       SubnetIds: 
         - !Ref SubnetId1
-        - !Ref SubnetId2
 
   MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"

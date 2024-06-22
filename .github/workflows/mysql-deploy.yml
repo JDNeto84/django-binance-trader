@@ -35,6 +35,5 @@ jobs:
               DBAllocatedStorage=${{ vars.DBALLOCATEDSTORAGE }} \
               DBInstanceClass=${{ vars.DB_INSTANCE_CLASS }} \
               SubnetId1=${{ vars.SUBNETID1 }} \
-              SubnetId2=${{ vars.SUBNET_ID2 }} \
               VPCId=${{ vars.VPCID }} \
             --capabilities CAPABILITY_NAMED_IAM
