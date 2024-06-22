@@ -2,15 +2,9 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "RDS MySQL Instance"
 
 Parameters:
-  DBInstanceIdentifier:
-    Type: String
-    Description: "Database instance identifier"
-    NoEcho: false
-
   DBName:
     Type: String
-    Description: "Database name"
-    NoEcho: false
+    Description: "Database name"    
 
   DBUsername:
     Type: String
@@ -22,16 +16,6 @@ Parameters:
     Description: "Database master password"
     NoEcho: true
 
-  DBAllocatedStorage:
-    Type: Number
-    Description: "The allocated storage size in gigabytes"
-    Default: 20  
-
-  DBInstanceClass:
-    Type: String
-    Description: "Database instance class"
-    Default: "db.t3.micro"
-
   SubnetId1:
     Type: "AWS::EC2::Subnet::Id"
     Description: "First subnet ID for the DB subnet group"
@@ -42,7 +26,12 @@ Parameters:
 
   VPCId:
     Type: "AWS::EC2::VPC::Id"
-    Description: "The ID of the VPC"
+    Description: "The ID of the VPC"  
+          
+  VPCSecurityGroupId:
+    Type: "AWS::EC2::SecurityGroup::Id"
+    Description: "VPC security group ID"
+    Default: "sg-0872544ac634aad83"
 
 Resources:
   MySqlDBSubnetGroup:
@@ -56,18 +45,22 @@ Resources:
   MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
     Properties:
-      DBInstanceIdentifier: !Ref DBInstanceIdentifier
-      AllocatedStorage: !Ref DBAllocatedStorage
-      DBInstanceClass: !Ref DBInstanceClass
-      Engine: "MySQL"
+      
+      LicenseModel": "general-public-license"
+      DBInstanceIdentifier: "django-mysql-db"
+      AllocatedStorage: 20
+      DBInstanceClass: "db.t3.micro"
+      Engine: "mysql"
       EngineVersion: "8.0.35"
       MasterUsername: !Ref DBUsername
       MasterUserPassword: !Ref DBPassword
       DBName: !Ref DBName
-      VPCSecurityGroups:
-        - "sg-0872544ac634aad83"
       DBSubnetGroupName: !Ref MySqlDBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref VPCSecurityGroupId
       PubliclyAccessible: false
+      StorageType: "gp2"
+      SupportedNetworkTypes: "IPV4"
       MultiAZ: false
 
 Outputs:
