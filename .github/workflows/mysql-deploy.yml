@@ -1,7 +1,7 @@
 name: Deploy RDS-MySQL CloudFormation
 
 on:
-  push:
+  pull_request:
     paths:
       - 'aws/rds-deploy.yml'
     branches:
