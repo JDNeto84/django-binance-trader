@@ -211,7 +211,7 @@ Resources:
             - Name: MYSQL_DB_PORT
               Value: !Ref "DjangoMysqlDbPort"
             - Name: BINANCE_TSTNET_URL
-              Value: !ref "BinanceTestNetUrl"
+              Value: !Ref "BinanceTestNetUrl"
             - Name: BINANCE_TSTNET_KEY
               Value: !Ref "BinanceTestNetKey"
             - Name: BINANCE_TSTNET_SECRET
