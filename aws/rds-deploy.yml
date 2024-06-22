@@ -16,32 +16,8 @@ Parameters:
     Description: "Database master password"
     NoEcho: true
 
-  SubnetId1:
-    Type: "AWS::EC2::Subnet::Id"
-    Description: "First subnet ID for the DB subnet group"
-
-  SubnetId2:
-    Type: "AWS::EC2::Subnet::Id"
-    Description: "Second subnet ID for the DB subnet group"
-
-  VPCId:
-    Type: "AWS::EC2::VPC::Id"
-    Description: "The ID of the VPC"  
-          
-  VPCSecurityGroupId:
-    Type: "AWS::EC2::SecurityGroup::Id"
-    Description: "VPC security group ID"
-    Default: "sg-0872544ac634aad83"
-
 Resources:
-  MySqlDBSubnetGroup:
-    Type: "AWS::RDS::DBSubnetGroup"
-    Properties: 
-      DBSubnetGroupDescription: "Subnet group for MySQL RDS"
-      SubnetIds: 
-        - !Ref SubnetId1
-
-  MySqlDBInstance:
+MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
     Properties:
       DBInstanceIdentifier: "django-mysql-db"
@@ -52,18 +28,16 @@ Resources:
       MasterUsername: !Ref DBUsername
       MasterUserPassword: !Ref DBPassword
       DBName: !Ref DBName
-      DBSubnetGroupName: !Ref MySqlDBSubnetGroup
-      VPCSecurityGroups:
-        - !Ref VPCSecurityGroupId
       PubliclyAccessible: false
       StorageType: "gp2"
-      SupportedNetworkTypes: "IPV4"
       MultiAZ: false
+      BackupRetentionPeriod: 2
+      AutoMinorVersionUpgrade: false
+      DeletionProtection: false
+      EnableIAMDatabaseAuthentication: true
+      SupportedNetworkTypes:
+        - "IPv4"
 
-Outputs:
-  MySqlDBEndpoint:
-    Description: "MySQL DB endpoint"
-    Value: !GetAtt MySqlDBInstance.Endpoint.Address
-  MySqlDBPort:
-    Description: "MySQL DB port"
-    Value: !GetAtt MySqlDBInstance.Endpoint.Port
+
+      
+      
