@@ -30,7 +30,7 @@ jobs:
             --parameter-overrides \
               DBNAME=${{ vars.MYSQL_DB_NAME }} \
               DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
-              DBPASSWORD=${{ secrets.DB_PASSWORD }} \
+              DBPASSWORD=${{ secrets.MYSQL_DB_PASS }} \
               AWSREGION=${{ secrets.AWS_REGION }} \
               DBINSTANCE=${{ vars.DB_INSTANCE }} \
               VPCID=${{ vars.VPC_ID }} \
