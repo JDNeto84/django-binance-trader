@@ -1,78 +1,66 @@
 AWSTemplateFormatVersion: "2010-09-09"
+
 Description: "RDS MySQL Instance"
 
 Parameters:
-  DBInstanceIdentifier:
-    Type: String
-    Description: "Database instance identifier"
-    NoEcho: true
-
-  DBName:
+  DBNAME:
     Type: String
     Description: "Database name"
-    NoEcho: true
-
-  DBUsername:
+  
+  DBUSERNAME:
     Type: String
     Description: "Database master username"
     NoEcho: true
-
-  DBPassword:
+  
+  DBPASSWORD:
     Type: String
     Description: "Database master password"
     NoEcho: true
-
-  DBAllocatedStorage:
-    Type: Number
-    Description: "The allocated storage size in gigabytes"
-    NoEcho: true
-
-  DBInstanceClass:
+  
+  DBINSTANCE:
     Type: String
-    Description: "Database instance class"
-    Default: "db.t3.micro"
-    AllowedValues: 
-      - db.t3.micro
-      - db.t4g.micro
-
-  SubnetId1:
-    Type: "AWS::EC2::Subnet::Id"
-    Description: "First subnet ID for the DB subnet group"
+    Description: "DB Instance Identifier"
     NoEcho: true
-
-  SubnetId2:
-    Type: "AWS::EC2::Subnet::Id"
-    Description: "First subnet ID for the DB subnet group"
+  
+  SUBNETZONE:
+    Type: String
+    Description: "Subnet Availability Zone"
     NoEcho: true
-
-  VPCId:
-    Type: "AWS::EC2::VPC::Id"
-    Description: "The ID of the VPC"
-    NoEcho: true
-
-  MySqlDBSubnetGroup:
-    Type: "AWS::RDS::DBSubnetGroup"
-    Properties: 
-      DBSubnetGroupDescription: "Subnet group for MySQL RDS"
-      SubnetIds: 
-        - !Ref SubnetId1
-
+  
+  VPCID:
+    Type: String
+    Description: "The ID of VPC"
+  
+Resources:
+  DBSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+          GroupDescription: Security group for MySQL DB Instance
+          VpcId: !Ref VPCID
+          SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 3306
+                ToPort: 3306
+                CidrIp: 0.0.0.0/0
+  
   MySqlDBInstance:
-    Type: "AWS::RDS::DBInstance"
-    Properties:
-      DBInstanceIdentifier: !Ref DBInstanceIdentifier
-      AllocatedStorage: !Ref DBAllocatedStorage
-      DBInstanceClass: !Ref DBInstanceClass
-      Engine: "MySQL"
-      EngineVersion: "8.0.35"
-      MasterUsername: !Ref DBUsername
-      MasterUserPassword: !Ref DBPassword
-      DBName: !Ref DBName
-      VPCSecurityGroups:
-        - "sg-0872544ac634aad83"
-      DBSubnetGroupName: !Ref MySqlDBSubnetGroup
-      PubliclyAccessible: false
-      MultiAZ: false
+      Type: "AWS::RDS::DBInstance"
+      Properties:
+          DBInstanceIdentifier: !Ref "DBINSTANCE"
+          AvailabilityZone: !Ref "SUBNETZONE"
+          AllocatedStorage: "20"
+          DBInstanceClass: "db.t3.micro"
+          Engine: "mysql"
+          EngineVersion: "8.0.35"
+          MasterUsername: !Ref "DBUSERNAME"
+          MasterUserPassword: !Ref "DBPASSWORD"
+          DBName: !Ref "DBNAME"
+          StorageType: "gp2"
+          PubliclyAccessible: false
+          BackupRetentionPeriod: 1
+          AutoMinorVersionUpgrade: true
+          VPCSecurityGroups: 
+              - !Ref DBSecurityGroup
 
 Outputs:
   MySqlDBEndpoint:
