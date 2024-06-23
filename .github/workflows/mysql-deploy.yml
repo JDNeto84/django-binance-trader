@@ -33,4 +33,5 @@ jobs:
               DBPASSWORD=${{ secrets.MYSQL_DB_PASS }} \
               DBINSTANCE=${{ vars.DB_INSTANCE }} \
               VPCID=${{ vars.VPC_ID }} \
+              SUBNETZONE=${{ vars.SUBNET_ZONE }}
             --capabilities CAPABILITY_NAMED_IAM

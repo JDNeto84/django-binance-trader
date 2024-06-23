@@ -22,6 +22,11 @@ Parameters:
     Description: "DB Instance Identifier"
     NoEcho: true
   
+  SUBNETZONE:
+    Type: String
+    Description: "Subnet Availability Zone"
+    NoEcho: true
+  
   VPCID:
     Type: "AWS::EC2::VPC::Id"
     Description: "The ID of the VPC"
@@ -31,7 +36,7 @@ Resources:
     Type: "AWS::RDS::DBInstance"
     Properties:
       DBInstanceIdentifier: !Ref "DBINSTANCE"
-      AvailabilityZone: "us-east-1"
+      AvailabilityZone: !Ref "SUBNETZONE"
       AllocatedStorage: "20"
       DBInstanceClass: "db.t3.micro"
       Engine: "mysql"
