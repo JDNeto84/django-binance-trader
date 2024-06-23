@@ -29,7 +29,7 @@ Parameters:
   
   VPCID:
     Type: String
-    Description: "The ID of the VPC"
+    Description: "The ID of VPC"
   
 Resources:
   DBSecurityGroup:
