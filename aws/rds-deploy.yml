@@ -19,6 +19,7 @@ Parameters:
     Description: The VPC ID for the RDS
 
 Resources:
+
   DBSecurityGroup:
       Type: AWS::EC2::SecurityGroup
       Properties:

@@ -1,4 +1,4 @@
-name: Deploy IAC VPC-RDS-ECS
+name: Deploy IAC VPC/RDS/ECS
 
 on:
   workflow_dispatch:
@@ -26,6 +26,8 @@ jobs:
         run: |
           echo "VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)" >> $GITHUB_ENV
           echo "SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text)" >> $GITHUB_ENV
+          echo "variable from shell environment : $VPC_ID"
+          echo "variable from shell environment : $SUBNET_ID"
   
   deploy-rds:
     needs: deploy-vpc
@@ -43,7 +45,9 @@ jobs:
 
       - name: Deploy RDS
         run: |
-          aws cloudformation deploy --template-file aws/rds-deploy.yml --stack-name rds-stack --capabilities CAPABILITY_NAMED_IAM --parameter-overrides VPCID=${{ env.VPC_ID }} DBNAME=${{ vars.MYSQL_DB_NAME }} DBUSERNAME=${{ vars.MYSQL_DB_USER }} DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
+          echo "variable from shell environment :$VPC_ID"
+          echo "variable from shell environment : $SUBNET_ID"
+          echo "aws cloudformation deploy --template-file aws/rds-deploy.yml --stack-name rds-stack --capabilities CAPABILITY_NAMED_IAM --parameter-overrides VPCID=${{ env.VPC_ID }} DBNAME=${{ vars.MYSQL_DB_NAME }} DBUSERNAME=${{ vars.MYSQL_DB_USER }} DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}"
 
       - name: Get RDS Outputs
         id: rds-outputs
