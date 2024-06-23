@@ -27,28 +27,40 @@ Parameters:
     Description: "Subnet Availability Zone"
     NoEcho: true
   
-  VPCSEGGROUP:
+  VPCID:
     Type: String
-    Description: "The Sec Group of the VPC"
+    Description: "The ID of the VPC"
   
 Resources:
+  DBSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+          GroupDescription: Security group for MySQL DB Instance
+          VpcId: !Ref VPCID
+          SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 3306
+                ToPort: 3306
+                CidrIp: 0.0.0.0/0
+  
   MySqlDBInstance:
-    Type: "AWS::RDS::DBInstance"
-    Properties:
-      DBInstanceIdentifier: !Ref "DBINSTANCE"
-      AvailabilityZone: !Ref "SUBNETZONE"
-      AllocatedStorage: "20"
-      DBInstanceClass: "db.t3.micro"
-      Engine: "mysql"
-      EngineVersion: "8.0.35"
-      MasterUsername: !Ref "DBUSERNAME"
-      MasterUserPassword: !Ref "DBPASSWORD"
-      DBName: !Ref "DBNAME"
-      StorageType: "gp2"
-      PubliclyAccessible: false
-      BackupRetentionPeriod: 1
-      AutoMinorVersionUpgrade: true
-      VPCSecurityGroups: "sg-0872544ac634aad83"
+      Type: "AWS::RDS::DBInstance"
+      Properties:
+          DBInstanceIdentifier: !Ref "DBINSTANCE"
+          AvailabilityZone: !Ref "SUBNETZONE"
+          AllocatedStorage: "20"
+          DBInstanceClass: "db.t3.micro"
+          Engine: "mysql"
+          EngineVersion: "8.0.35"
+          MasterUsername: !Ref "DBUSERNAME"
+          MasterUserPassword: !Ref "DBPASSWORD"
+          DBName: !Ref "DBNAME"
+          StorageType: "gp2"
+          PubliclyAccessible: false
+          BackupRetentionPeriod: 1
+          AutoMinorVersionUpgrade: true
+          VPCSecurityGroups: 
+              - !Ref DBSecurityGroup
 
 Outputs:
   MySqlDBEndpoint:
