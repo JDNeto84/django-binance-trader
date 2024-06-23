@@ -3,52 +3,52 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "RDS MySQL Instance"
 
 Parameters:
-  DB-NAME:
+  DBNAME:
     Type: String
     Description: "Database name"
   
-  DB-USERNAME:
+  DBUSERNAME:
     Type: String
     Description: "Database master username"
     NoEcho: true
   
-  DB-PASSWORD:
+  DBPASSWORD:
     Type: String
     Description: "Database master password"
     NoEcho: true
   
-  AWS-REGION:
+  AWSREGION:
     Type: String
     Description: "AWS Region"
     NoEcho: true
   
-  DB-INSTANCE:
+  DBINSTANCE:
     Type: String
     Description: "DB Instance Identifier"
     NoEcho: true
   
-  VPC-ID:
-    Type: "AWS::EC2::VPC::Id"
+  VPCID:
+    Type: String
     Description: "The ID of the VPC"
   
 Resources:
   MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
     Properties:
-      DBInstanceIdentifier: !Ref "DB-INSTANCE"
-      AvailabilityZone: !Ref "AWS-REGION"
+      DBInstanceIdentifier: !Ref "DBINSTANCE"
+      AvailabilityZone: !Ref "AWSREGION"
       AllocatedStorage: "20"
       DBInstanceClass: "db.t3.micro"
       Engine: "mysql"
       EngineVersion: "8.0.35"
-      MasterUsername: !Ref "DB-USERNAME"
-      MasterUserPassword: !Ref "DB-PASSWORD"
-      DBName: !Ref "DB-NAME"
+      MasterUsername: !Ref "DBUSERNAME"
+      MasterUserPassword: !Ref "DBPASSWORD"
+      DBName: !Ref "DBNAME"
       StorageType: "gp2"
       PubliclyAccessible: false
       BackupRetentionPeriod: 1
       AutoMinorVersionUpgrade: true
-      VPCSecurityGroups: !Ref "VPC-ID"
+      VPCSecurityGroups: !Ref "VPCID"
 
 Outputs:
   MySqlDBEndpoint:
