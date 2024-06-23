@@ -52,8 +52,8 @@ jobs:
       - name: Get RDS Outputs
         id: rds-outputs
         run: |
-          echo "RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name rds-stack --query 'Stacks[0].Outputs[?OutputKey==\"MySqlDBEndpoint\"].OutputValue' --output text)" >> $GITHUB_ENV
-
+          echo "RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name rds-stack --query "Stacks[0].Outputs[?OutputKey=='MySqlDBEndpoint'].OutputValue" --output text)" >> $GITHUB_ENV
+          echo $RDS_ENDPOINT
   deploy-ecs:
     needs: deploy-rds 
     runs-on: ubuntu-latest
