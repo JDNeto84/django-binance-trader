@@ -27,9 +27,9 @@ Parameters:
     Description: "Subnet Availability Zone"
     NoEcho: true
   
-  VPCID:
+  VPCSEGGROUP:
     Type: AWS::EC2::SecurityGroup
-    Description: "The ID of the VPC"
+    Description: "The Sec Group of the VPC"
   
 Resources:
   MySqlDBInstance:
@@ -49,7 +49,7 @@ Resources:
       BackupRetentionPeriod: 1
       AutoMinorVersionUpgrade: true
       VPCSecurityGroups: 
-        - !Ref "VPCID"
+        - !Ref "VPCSEGGROUP"
 
 Outputs:
   MySqlDBEndpoint:

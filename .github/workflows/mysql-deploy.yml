@@ -32,6 +32,6 @@ jobs:
               DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
               DBPASSWORD=${{ secrets.MYSQL_DB_PASS }} \
               DBINSTANCE=${{ vars.DB_INSTANCE }} \
-              VPCID=${{ vars.VPC_ID }} \
+              VPCSEGGROUP=${{ vars.VPC_SEG_GROUP }} \
               SUBNETZONE=${{ vars.SUBNET_ZONE }}
             --capabilities CAPABILITY_NAMED_IAM
