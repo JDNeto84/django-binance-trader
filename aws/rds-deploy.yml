@@ -48,8 +48,7 @@ Resources:
       PubliclyAccessible: false
       BackupRetentionPeriod: 1
       AutoMinorVersionUpgrade: true
-      VPCSecurityGroups: 
-        - !Ref "VPCSEGGROUP"
+      VPCSecurityGroups: !Ref "VPCSEGGROUP"
 
 Outputs:
   MySqlDBEndpoint:
