@@ -28,13 +28,10 @@ jobs:
             --template-file aws/rds-deploy.yml \
             --stack-name mysql-rds-stack \
             --parameter-overrides \
-              DBInstanceIdentifier=${{ vars.DBINSTANCEIDENTIFIER }} \
-              DBName=${{ vars.MYSQL_DB_NAME }} \
-              DBUsername=${{ vars.MYSQL_DB_USER }} \
-              DBPassword=${{ secrets.DB_PASSWORD }} \
-              DBAllocatedStorage=${{ vars.DBALLOCATEDSTORAGE }} \
-              DBInstanceClass=${{ vars.DB_INSTANCE_CLASS }} \
-              SubnetId1=${{ vars.SUBNETID1 }} \
-              SubnetId2=${{ vars.SUBNETID2 }} \
-              VPCId=${{ vars.VPCID }} \
+              DB-NAME=${{ vars.MYSQL_DB_NAME }} \
+              DB-USERNAME=${{ vars.MYSQL_DB_USER }} \
+              DB-PASSWORD=${{ secrets.DB_PASSWORD }} \
+              AWS-REGION=${{ secrets.AWS_REGION }} \
+              DB-INSTANCE=${{ vars.DB_INSTANCE }} \
+              VPC-ID=${{ vars.VPC_ID }} \
             --capabilities CAPABILITY_NAMED_IAM

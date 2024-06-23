@@ -1,43 +1,59 @@
 AWSTemplateFormatVersion: "2010-09-09"
+
 Description: "RDS MySQL Instance"
 
 Parameters:
-  DBName:
+  DB-NAME:
     Type: String
-    Description: "Database name"    
-
-  DBUsername:
+    Description: "Database name"
+  
+  DB-USERNAME:
     Type: String
     Description: "Database master username"
     NoEcho: true
-
-  DBPassword:
+  
+  DB-PASSWORD:
     Type: String
     Description: "Database master password"
     NoEcho: true
-
+  
+  AWS-REGION:
+    Type: String
+    Description: "AWS Region"
+    NoEcho: true
+  
+  DB-INSTANCE:
+    Type: String
+    Description: "DB Instance Identifier"
+    NoEcho: true
+  
+  VPC-ID:
+    Type: "AWS::EC2::VPC::Id"
+    Description: "The ID of the VPC"
+  
 Resources:
-MySqlDBInstance:
+  MySqlDBInstance:
     Type: "AWS::RDS::DBInstance"
     Properties:
-      DBInstanceIdentifier: "django-mysql-db"
-      AllocatedStorage: 20
+      DBInstanceIdentifier: !Ref "DB-INSTANCE"
+      AvailabilityZone: !Ref "AWS-REGION"
+      AllocatedStorage: "20"
       DBInstanceClass: "db.t3.micro"
       Engine: "mysql"
       EngineVersion: "8.0.35"
-      MasterUsername: !Ref DBUsername
-      MasterUserPassword: !Ref DBPassword
-      DBName: !Ref DBName
-      PubliclyAccessible: false
+      MasterUsername: !Ref "DB-USERNAME"
+      MasterUserPassword: !Ref "DB-PASSWORD"
+      DBName: !Ref "DB-NAME"
       StorageType: "gp2"
-      MultiAZ: false
-      BackupRetentionPeriod: 2
-      AutoMinorVersionUpgrade: false
-      DeletionProtection: false
-      EnableIAMDatabaseAuthentication: true
-      SupportedNetworkTypes:
-        - "IPv4"
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 1
+      AutoMinorVersionUpgrade: true
+      VPCSecurityGroups: !Ref "VPC-ID"
 
-
-      
-      
+Outputs:
+  MySqlDBEndpoint:
+    Description: "MySQL DB endpoint"
+    Value: !GetAtt MySqlDBInstance.Endpoint.Address
+  MySqlDBPort:
+    Description: "MySQL DB port"
+    Value: !GetAtt MySqlDBInstance.Endpoint.Port
