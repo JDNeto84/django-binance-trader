@@ -17,11 +17,6 @@ Parameters:
     Description: "Database master password"
     NoEcho: true
   
-  AWSREGION:
-    Type: String
-    Description: "AWS Region"
-    NoEcho: true
-  
   DBINSTANCE:
     Type: String
     Description: "DB Instance Identifier"
@@ -36,7 +31,7 @@ Resources:
     Type: "AWS::RDS::DBInstance"
     Properties:
       DBInstanceIdentifier: !Ref "DBINSTANCE"
-      AvailabilityZone: !Ref "AWSREGION"
+      AvailabilityZone: "us-east-1"
       AllocatedStorage: "20"
       DBInstanceClass: "db.t3.micro"
       Engine: "mysql"
