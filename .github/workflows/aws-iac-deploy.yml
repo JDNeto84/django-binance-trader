@@ -47,15 +47,14 @@ jobs:
       - name: Deploy RDS
         run: |
           aws cloudformation deploy \
-            --template-file aws/rds-deploy.yml \
-            --stack-name rds-stack \
-            --capabilities CAPABILITY_NAMED_IAM \
-            --parameter-overrides \
-              VPCID=${{ env.VPC_ID }} \
-              SUBNETID=${{ env.SUBNET_ID }} \
-              DBNAME=${{ vars.MYSQL_DB_NAME }} \
-              DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
-              DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
+          --template-file aws/rds-deploy.yml \
+          --stack-name rds-stack \
+          --capabilities CAPABILITY_NAMED_IAM \
+          --parameter-overrides \
+            VPCID=${{ env.VPC_ID }} \
+            DBNAME=${{ vars.MYSQL_DB_NAME }} \
+            DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
+            DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
 
       - name: Get RDS Outputs
         id: rds-outputs

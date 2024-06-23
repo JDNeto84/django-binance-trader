@@ -15,6 +15,28 @@ Parameters:
     NoEcho: true
 
 Resources:
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !ImportValue VPCId
+      CidrBlock: !ImportValue PublicSubnet1
+      AvailabilityZone: !ImportValue PublicSubnet1AZ
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !ImportValue VPCId
+      CidrBlock: !ImportValue PublicSubnet2
+      AvailabilityZone: !ImportValue PublicSubnet2AZ
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS instance
+      SubnetIds:
+        - !Ref PublicSubnet1 
+        - !Ref PublicSubnet2
+
   DBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
