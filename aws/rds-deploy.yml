@@ -28,7 +28,7 @@ Parameters:
     NoEcho: true
   
   VPCSEGGROUP:
-    Type: AWS::EC2::SecurityGroup
+    Type: String
     Description: "The Sec Group of the VPC"
   
 Resources:
