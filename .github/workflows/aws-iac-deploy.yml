@@ -24,8 +24,8 @@ jobs:
       - name: Get VPC Outputs
         id: vpc-outputs
         run: |
-          echo "VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query 'Stacks[0].Outputs[?OutputKey==\\\"VPCId\\\"].OutputValue' --output text)" >> $GITHUB_ENV
-          echo "SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query 'Stacks[0].Outputs[?OutputKey==\\\"SubnetId\\\"].OutputValue' --output text)" >> $GITHUB_ENV
+          echo "VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)" >> $GITHUB_ENV
+          echo "SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text)" >> $GITHUB_ENV
   
   deploy-rds:
     needs: deploy-vpc
