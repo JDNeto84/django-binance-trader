@@ -28,7 +28,7 @@ Parameters:
     NoEcho: true
   
   VPCID:
-    Type: String
+    Type: AWS::EC2::SecurityGroup
     Description: "The ID of the VPC"
   
 Resources:
@@ -48,7 +48,8 @@ Resources:
       PubliclyAccessible: false
       BackupRetentionPeriod: 1
       AutoMinorVersionUpgrade: true
-      VPCSecurityGroups: !Ref "VPCID"
+      VPCSecurityGroups: 
+        - !Ref "VPCID"
 
 Outputs:
   MySqlDBEndpoint:
