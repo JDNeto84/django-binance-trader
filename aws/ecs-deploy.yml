@@ -1,143 +1,24 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "ECS Cluster for Django Application with Resources"
+Description: "ECS Cluster for Django Application"
 
 Parameters:
   DockerImage:
-    Type: "String"
-    Description: "The Docker image URL"
+    Type: String
     Default: "jdneto84/django-binance-trader:latest"
 
   DjangoSecretKey:
-    Type: "String"
-    Description: "Django Secret Key"
+    Type: String
     NoEcho: true
 
   MysqlDbPass:
-    Type: "String"
-    Description: "MySQL Database Password"
+    Type: String
     NoEcho: true
-
-  BinanceTestNetKey:
-    Type: "String"
-    Description: "Binance TestNet API Key"
-    NoEcho: true
-
-  BinanceTestNetSecret:
-    Type: "String"
-    Description: "Binance TestNet Secret"
-    NoEcho: true
-
-  BinanceTestNetUrl:
-    Type: "String"
-    Description: "Binance TestNet URL"
-    Default: "https://testnet.binance.vision"
-
-  DjangoAllowedHosts:
-    Type: "String"
-    Description: "Django Allow Hosts"
-    Default: "['localhost', '127.0.0.1']"
-
-  DjangoDebug:
-    Type: "String"
-    Description: "Django Debug"
-    Default: "True"
-
-  DjangoEngine:
-    Type: "String"
-    Description: "Django Engine"
-    Default: "mysql"
-
-  DjangoMysqlDbHost:
-    Type: "String"
-    Description: "Django MySQL DB Host"
-    Default: "mysql"
-
-  DjangoMysqlDbName:
-    Type: "String"
-    Description: "Django MySQL DB Name"
-    Default: "trader"
-
-  DjangoMysqlDbPort:
-    Type: "String"
-    Description: "Django Mysql DB Port"
-    Default: "3306"
-
-  DjangoMysqlDbUser:
-    Type: "String"
-    Description: "Django MySQL DB User"
-    Default: "root"
 
 Resources:
-  VPC:
-    Type: "AWS::EC2::VPC"
-    Properties:
-      CidrBlock: "10.0.0.0/16"
-      EnableDnsSupport: "true"
-      EnableDnsHostnames: "true"
-      Tags:
-        - Key: "Name"
-          Value: "DjangoVPC"
-
-  Subnet:
-    Type: "AWS::EC2::Subnet"
-    Properties:
-      VpcId: !Ref VPC
-      CidrBlock: "10.0.0.0/24"
-      MapPublicIpOnLaunch: "true"
-      AvailabilityZone: !Select [0, !GetAZs ""]
-
-  InternetGateway:
-    Type: "AWS::EC2::InternetGateway"
-
-  VPCGatewayAttachment:
-    Type: "AWS::EC2::VPCGatewayAttachment"
-    Properties:
-      VpcId: !Ref VPC
-      InternetGatewayId: !Ref InternetGateway
-
-  RouteTable:
-    Type: "AWS::EC2::RouteTable"
-    Properties:
-      VpcId: !Ref VPC
-
-  Route:
-    Type: "AWS::EC2::Route"
-    Properties:
-      RouteTableId: !Ref RouteTable
-      DestinationCidrBlock: "0.0.0.0/0"
-      GatewayId: !Ref InternetGateway
-
-  SubnetRouteTableAssociation:
-    Type: "AWS::EC2::SubnetRouteTableAssociation"
-    Properties:
-      SubnetId: !Ref Subnet
-      RouteTableId: !Ref RouteTable
-
-  SecurityGroup:
-    Type: "AWS::EC2::SecurityGroup"
-    Properties:
-      VpcId: !Ref VPC
-      GroupDescription: "Allow access to ECS services"
-      SecurityGroupIngress:
-        - IpProtocol: "tcp"
-          FromPort: 443
-          ToPort: 443
-          CidrIp: "0.0.0.0/0"
-         - IpProtocol: "tcp"
-          FromPort: 8000
-          ToPort: 8000
-          CidrIp: "0.0.0.0/0" # Only TST external access
-
   ECSCluster:
     Type: "AWS::ECS::Cluster"
     Properties:
       ClusterName: "DjangoECSCluster"
-
-  ECSLogGroup:
-    Type: "AWS::Logs::LogGroup"
-    Properties:
-      LogGroupName: "/ecs/django"
-      RetentionInDays: 14
 
   ECSRole:
     Type: "AWS::IAM::Role"
@@ -160,19 +41,6 @@ Resources:
                   - "logs:PutLogEvents"
                 Resource: "arn:aws:logs:*:*:*"
 
-  ECSTaskExecutionRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service: "ecs-tasks.amazonaws.com"
-            Action: "sts:AssumeRole"
-      ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-
   TaskDefinition:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
@@ -181,18 +49,12 @@ Resources:
       Cpu: "256"
       Memory: "512"
       NetworkMode: "awsvpc"
-      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      ExecutionRoleArn: !GetAtt ECSRole.Arn
       TaskRoleArn: !GetAtt ECSRole.Arn
       ContainerDefinitions:
-        - Name: "django-container"
+        - Name: "dbt-container"
           Image: !Ref "DockerImage"
           Essential: true
-          LogConfiguration:
-            LogDriver: "awslogs"
-            Options:
-              awslogs-group: !Ref ECSLogGroup
-              awslogs-region: !Ref "AWS::Region"
-              awslogs-stream-prefix: "ecs"
           PortMappings:
             - ContainerPort: 443
             - ContainerPort: 8000
@@ -200,27 +62,21 @@ Resources:
             - Name: DJANGO_SECRET_KEY
               Value: !Ref "DjangoSecretKey"
             - Name: DJANGO_DEBUG
-              Value: !Ref "DjangoDebug"
+              Value: "True"
             - Name: DJANGO_DB_ENGINE
-              Value: !Ref "DjangoEngine"
+              Value: "mysql"
             - Name: DJANGO_ALLOWED_HOSTS
-              Value: !Ref "DjangoAllowedHosts"
+              Value: "['localhost', '127.0.0.1', '0.0.0.0']"
             - Name: MYSQL_DB_HOST
-              Value: !Ref "DjangoMysqlDbHost"
+              Value: !ImportValue MySqlDBEndpoint
             - Name: MYSQL_DB_NAME
-              Value: !Ref "DjangoMysqlDbName"
+              Value: "trader"
             - Name: MYSQL_DB_USER
-              Value: !Ref "DjangoMysqlDbUser"
+              Value: "admin"
             - Name: MYSQL_DB_PASS
               Value: !Ref "MysqlDbPass"
             - Name: MYSQL_DB_PORT
-              Value: !Ref "DjangoMysqlDbPort"
-            - Name: BINANCE_TSTNET_URL
-              Value: !Ref "BinanceTestNetUrl"
-            - Name: BINANCE_TSTNET_KEY
-              Value: !Ref "BinanceTestNetKey"
-            - Name: BINANCE_TSTNET_SECRET
-              Value: !Ref "BinanceTestNetSecret"
+              Value: !ImportValue MySqlDBPort
 
   ECSService:
     Type: "AWS::ECS::Service"
@@ -232,9 +88,9 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           Subnets:
-            - !Ref Subnet
+            - !ImportValue SubnetId
           SecurityGroups:
-            - !Ref SecurityGroup
+            - !ImportValue SecurityGroupId
           AssignPublicIp: "ENABLED"
 
 Outputs:
@@ -247,4 +103,3 @@ Outputs:
     Value: !Ref ECSService
     Export:
       Name: "ECSServiceName"
-
