@@ -24,9 +24,9 @@ jobs:
     - name: Retrieve VPC outputs
       id: vpc-outputs
       run: |
-        VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
-        SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text)
-        echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
+        VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text) \
+        SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text) \
+        echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV \
         echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_ENV
 
   deploy-rds:
@@ -56,7 +56,7 @@ jobs:
       - name: Retrieve RDS endpoint
         id: rds-outputs
         run: |
-          RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name rds-stack --query "Stacks[0].Outputs[?OutputKey=='MySqlDBEndpoint'].OutputValue" --output text)
+          RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name rds-stack --query "Stacks[0].Outputs[?OutputKey=='MySqlDBEndpoint'].OutputValue" --output text) \
           echo "RDS_ENDPOINT=$RDS_ENDPOINT" >> $GITHUB_ENV
 
   deploy-ecs:
