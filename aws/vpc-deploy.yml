@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "VPC, Subnets and Security Groups for the application"
+Description: "VPC, Subnets and Security Groups"
 
 Resources:
   VPC:

@@ -9,68 +9,41 @@ Parameters:
   DBUSERNAME:
     Type: String
     NoEcho: true
-  
+
   DBPASSWORD:
     Type: String
     NoEcho: true
 
 Resources:
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !ImportValue VPCId
-      CidrBlock: !ImportValue PublicSubnet1
-      AvailabilityZone: !ImportValue PublicSubnet1AZ
-
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !ImportValue VPCId
-      CidrBlock: !ImportValue PublicSubnet2
-      AvailabilityZone: !ImportValue PublicSubnet2AZ
-
-  DBSubnetGroup:
-    Type: AWS::RDS::DBSubnetGroup
-    Properties:
-      DBSubnetGroupDescription: Subnet group for RDS instance
-      SubnetIds:
-        - !Ref PublicSubnet1 
-        - !Ref PublicSubnet2
-
   DBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for MySQL DB Instance
-      VpcId: !ImportValue VPCId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3306
-          ToPort: 3306
-          CidrIp: 10.0.0.0/24
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+          GroupDescription: Security group for MySQL DB Instance
+          VpcId: !ImportValue VPCId
+          SecurityGroupIngress:
+              - IpProtocol: tcp
+                FromPort: 3306
+                ToPort: 3306
+                CidrIp: 10.0.0.0/24
 
   MySqlDBInstance:
-    Type: "AWS::RDS::DBInstance"
-    Properties:
-      DBInstanceIdentifier: "MySqlDB"
-      AllocatedStorage: "20"
-      DBInstanceClass: "db.t3.micro"
-      Engine: "mysql"
-      EngineVersion: "8.0.35"
-      MasterUsername: !Ref "DBUSERNAME"
-      MasterUserPassword: !Ref "DBPASSWORD"
-      DBName: !Ref "DBNAME"
-      StorageType: "gp2"
-      PubliclyAccessible: false
-      VPCSecurityGroups: 
-        - !Ref DBSecurityGroup
-      DBSubnetGroupName: !Ref DBSubnetGroup
-
-  DBSubnetGroup:
-    Type: "AWS::RDS::DBSubnetGroup"
-    Properties:
-      DBSubnetGroupDescription: "Subnet group for RDS instance"
-      SubnetIds:
-        - !ImportValue SubnetId
+      Type: "AWS::RDS::DBInstance"
+      Properties:
+          DBInstanceIdentifier: "django-mysql-db"
+          AvailabilityZone: "us-east-1a"
+          AllocatedStorage: "20"
+          DBInstanceClass: "db.t3.micro"
+          Engine: "mysql"
+          EngineVersion: "8.0.35"
+          MasterUsername: !Ref "DBUSERNAME"
+          MasterUserPassword: !Ref "DBPASSWORD"
+          DBName: !Ref "DBNAME"
+          StorageType: "gp2"
+          PubliclyAccessible: false
+          BackupRetentionPeriod: 1
+          AutoMinorVersionUpgrade: true
+          VPCSecurityGroups: 
+              - !Ref DBSecurityGroup
 
 Outputs:
   MySqlDBEndpoint:
