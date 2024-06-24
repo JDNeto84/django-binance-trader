@@ -1,4 +1,4 @@
-name: Deploy IAC VPC/RDS/ECS
+name: Deploy IaC VPC/RDS/ECS
 
 on:
   workflow_dispatch:
@@ -41,13 +41,13 @@ jobs:
       - name: Deploy RDS
         run: |
           aws cloudformation deploy \
-            --template-file aws/rds-deploy.yml \
-            --stack-name rds-stack \
-            --capabilities CAPABILITY_NAMED_IAM \
-            --parameter-overrides \
-              DBNAME=${{ vars.MYSQL_DB_NAME }} \
-              DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
-              DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
+          --template-file aws/rds-deploy.yml \
+          --stack-name rds-stack \
+          --capabilities CAPABILITY_NAMED_IAM \
+          --parameter-overrides \
+            DBNAME=${{ vars.MYSQL_DB_NAME }} \
+            DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
+            DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
 
       - name: Wait for RDS stack complete
         run: aws cloudformation wait stack-create-complete --stack-name rds-stack
