@@ -44,13 +44,3 @@ Outputs:
     Value: !Ref VPC
     Export:
       Name: VPCId
-  
-  SubnetId:
-    Value: !Ref Subnet
-    Export:
-      Name: SubnetId
-  
-  SecurityGroupId:
-    Value: !Ref SecurityGroup
-    Export:
-      Name: SecurityGroupId 

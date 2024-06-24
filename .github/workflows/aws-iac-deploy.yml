@@ -19,7 +19,10 @@ jobs:
 
       - name: Deploy VPC
         run: |
-          aws cloudformation deploy --template-file aws/vpc-deploy.yml --stack-name vpc-stack --capabilities CAPABILITY_NAMED_IAM
+          aws cloudformation deploy \
+          --template-file aws/vpc-deploy.yml \
+          --stack-name vpc-stack \
+          --capabilities CAPABILITY_NAMED_IAM
   
   deploy-rds:
     needs: deploy-vpc
@@ -39,13 +42,22 @@ jobs:
         id: vpc-outputs
         run: |
           VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
-          SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text)
           echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
-          echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_ENV
 
       - name: Deploy RDS
         run: |
-          echo "aws cloudformation deploy --template-file aws/rds-deploy.yml --stack-name rds-stack --capabilities CAPABILITY_NAMED_IAM --parameter-overrides VPCID=${{ env.VPC_ID }} DBNAME=${{ vars.MYSQL_DB_NAME }} DBUSERNAME=${{ vars.MYSQL_DB_USER }} DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}"
+          aws cloudformation deploy \
+            --template-file aws/rds-deploy.yml \
+            --stack-name rds-stack \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              VPCID=${{ env.VPC_ID }} \
+              DBNAME=${{ vars.MYSQL_DB_NAME }} \
+              DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
+              DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
+
+      - name: Wait for RDS stack complete
+        run: aws cloudformation wait stack-create-complete --stack-name rds-stack
 
   deploy-ecs:
     needs: deploy-rds 
