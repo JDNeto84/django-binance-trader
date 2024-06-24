@@ -9,7 +9,7 @@ Parameters:
   DBUSERNAME:
     Type: String
     NoEcho: true
-  
+
   DBPASSWORD:
     Type: String
     NoEcho: true
@@ -24,41 +24,42 @@ Resources:
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
-          CidrIp: 10.0.0.0/24
-
-  MySqlDBInstance:
-    Type: "AWS::RDS::DBInstance"
-    Properties:
-      DBInstanceIdentifier: "MySqlDB"
-      AllocatedStorage: "20"
-      DBInstanceClass: "db.t3.micro"
-      Engine: "mysql"
-      EngineVersion: "8.0.35"
-      MasterUsername: !Ref "DBUSERNAME"
-      MasterUserPassword: !Ref "DBPASSWORD"
-      DBName: !Ref "DBNAME"
-      StorageType: "gp2"
-      PubliclyAccessible: false
-      VPCSecurityGroups: 
-        - !Ref DBSecurityGroup
-      DBSubnetGroupName: !Ref DBSubnetGroup
+          CidrIp: 0.0.0.0/0
 
   DBSubnetGroup:
     Type: "AWS::RDS::DBSubnetGroup"
     Properties:
       DBSubnetGroupDescription: "Subnet group for RDS instance"
       SubnetIds:
-        - !ImportValue SubnetId
+        - !ImportValue SubnetId1
+        - !ImportValue SubnetId2
+
+  MySqlDBInstance:
+      Type: "AWS::RDS::DBInstance"
+      Properties:
+          DBInstanceIdentifier: "django-mysql"
+          AllocatedStorage: "20"
+          DBInstanceClass: "db.t3.micro"
+          Engine: "mysql"
+          EngineVersion: "8.0.35"
+          MasterUsername: !Ref "DBUSERNAME"
+          MasterUserPassword: !Ref "DBPASSWORD"
+          DBName: !Ref "DBNAME"
+          StorageType: "gp2"
+          PubliclyAccessible: false
+          VPCSecurityGroups: 
+            - !Ref DBSecurityGroup
+          DBSubnetGroupName: !Ref DBSubnetGroup
 
 Outputs:
   MySqlDBEndpoint:
     Description: "MySQL DB endpoint"
     Value: !GetAtt MySqlDBInstance.Endpoint.Address
     Export:
-      Name: "MySqlDBEndpoint"
+      Name: MySqlDBEndpoint
 
   MySqlDBPort:
     Description: "MySQL DB port"
     Value: !GetAtt MySqlDBInstance.Endpoint.Port
     Export:
-      Name: "MySqlDBPort"
+      Name: MySqlDBPort

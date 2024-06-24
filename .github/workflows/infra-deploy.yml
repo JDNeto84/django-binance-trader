@@ -1,11 +1,7 @@
 name: Deploy AWS Cluster
 
 on:
-  push:
-    paths:
-      - 'aws/ecs-deploy.yml'
-    branches:
-      - develop
+  workflow_dispatch:
 
 jobs:
   deploy-ecs-cloudformation:

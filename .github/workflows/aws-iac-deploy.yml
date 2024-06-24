@@ -1,64 +1,84 @@
-name: Deploy IAC AWS
+name: Deploy IaC VPC/RDS/ECS
+
 on:
   workflow_dispatch:
 
 jobs:
-  deploy-stack:
+  deploy-vpc:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Deploy VPC AWS
-      run: |
-        aws cloudformation deploy \
-          --template-file aws/vpc-deploy.yml \
-          --stack-name vpc-stack \
-          --capabilities CAPABILITY_NAMED_IAM
+      - name: Deploy VPC
+        run: |
+          aws cloudformation deploy \
+            --template-file aws/vpc-deploy.yml \
+            --stack-name vpc-stack \
+            --capabilities CAPABILITY_NAMED_IAM
 
-    - name: Retrieve VPC outputs
-      id: vpc-outputs
-      run: |
-        VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
-        SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text)
-        echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
-        echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_ENV
+  deploy-rds:
+    needs: deploy-vpc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Deploy RDS
-      run: |
-        aws cloudformation deploy \
-          --template-file aws/rds-deploy.yml \
-          --stack-name rds-stack \
-          --capabilities CAPABILITY_NAMED_IAM \
-          --parameter-overrides |
-          VPCID=$VPC_ID \
-          SUBNETID=$SUBNET_ID \
-          DBNAME=${{ vars.MYSQL_DB_NAME }} \
-          DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
-          DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Retrieve RDS endpoint
-      id: rds-outputs
-      run: |
-        RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name rds-stack --query "Stacks[0].Outputs[?OutputKey=='MySqlDBEndpoint'].OutputValue" --output text)
-        echo "RDS_ENDPOINT=$RDS_ENDPOINT" >> $GITHUB_ENV
+      - name: Deploy RDS
+        run: |
+          aws cloudformation deploy \
+            --template-file aws/rds-deploy.yml \
+            --stack-name rds-stack \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              DBNAME=${{ vars.MYSQL_DB_NAME }} \
+              DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
+              DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
 
-    - name: Deploy ECS
-      run: |
-        aws cloudformation deploy \
-          --template-file aws/ecs-deploy.yml \
-          --stack-name ecs-stack \
-          --capabilities CAPABILITY_NAMED_IAM \
-          --parameter-overrides |
-          MYSQL_DB_HOST=$RDS_ENDPOINT \
-          DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
-          MysqlDbPass=${{ secrets.MYSQL_DB_PASS }} \
-          
+      - name: Wait for RDS stack complete
+        run: aws cloudformation wait stack-create-complete --stack-name rds-stack
 
+  deploy-ecs:
+    needs: deploy-rds 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy ECS
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          MYSQL_DB_PASS: ${{ secrets.MYSQL_DB_PASS }}
+          BINANCE_TSTNET_KEY: ${{ secrets.BINANCE_TSTNET_KEY }}
+          BINANCE_TSTNET_SECRET: ${{ secrets.BINANCE_TSTNET_SECRET }} 
+        run: |
+          aws cloudformation deploy \
+            --stack-name ecs-stack \
+            --template-file aws/ecs-deploy.yml \
+            --parameter-overrides \
+              DjangoSecretKey="$DJANGO_SECRET_KEY" \
+              MysqlDbPass="$MYSQL_DB_PASS" \
+              BinanceTestNetKey="$BINANCE_TSTNET_KEY" \
+              BinanceTestNetSecret="$BINANCE_TSTNET_SECRET" \
+            --capabilities CAPABILITY_NAMED_IAM

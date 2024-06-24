@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'app/**'
-      - 'Dockerfile.prod'
+      - 'Dockerfile'
       - 'requirements.txt'
       - 'nginx.conf'
       - 'default.conf'
@@ -36,6 +36,6 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Dockerfile.prod
+        file: ./Dockerfile
         push: true
         tags: jdneto84/django-binance-trader:latest

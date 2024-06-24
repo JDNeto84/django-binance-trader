@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "ECS Cluster for Django Application"
+Description: "ECS Cluster for Django App"
 
 Parameters:
   DockerImage:
@@ -11,6 +11,14 @@ Parameters:
     NoEcho: true
 
   MysqlDbPass:
+    Type: String
+    NoEcho: true
+
+  BinanceTestNetKey:
+    Type: String
+    NoEcho: true
+
+  BinanceTestNetSecret:
     Type: String
     NoEcho: true
 
@@ -69,14 +77,18 @@ Resources:
               Value: "['localhost', '127.0.0.1', '0.0.0.0']"
             - Name: MYSQL_DB_HOST
               Value: !ImportValue MySqlDBEndpoint
+            - Name: MYSQL_DB_PORT
+              Value: !ImportValue MySqlDBPort
             - Name: MYSQL_DB_NAME
               Value: "trader"
             - Name: MYSQL_DB_USER
               Value: "admin"
             - Name: MYSQL_DB_PASS
               Value: !Ref "MysqlDbPass"
-            - Name: MYSQL_DB_PORT
-              Value: !ImportValue MySqlDBPort
+            - Name: BINANCE_TSTNET_KEY
+              Value: !Ref "BinanceTestNetKey"
+            - Name: BINANCE_TSTNET_SECRET
+              Value: !Ref "BinanceTestNetSecret"
 
   ECSService:
     Type: "AWS::ECS::Service"
@@ -88,7 +100,8 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           Subnets:
-            - !ImportValue SubnetId
+            - !ImportValue SubnetId1
+            - !ImportValue SubnetId2
           SecurityGroups:
             - !ImportValue SecurityGroupId
           AssignPublicIp: "ENABLED"
@@ -97,9 +110,9 @@ Outputs:
   ECSClusterName:
     Value: !Ref ECSCluster
     Export:
-      Name: "ECSClusterName"
+      Name: ECSClusterName
 
   ECSServiceName:
     Value: !Ref ECSService
     Export:
-      Name: "ECSServiceName"
+      Name: ECSServiceName
