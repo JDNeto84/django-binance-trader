@@ -66,9 +66,9 @@ jobs:
       - name: Deploy ECS
         run: |
           aws cloudformation deploy \
-            --template-file aws/ecs-deploy.yml \
-            --stack-name ecs-stack \
-            --capabilities CAPABILITY_NAMED_IAM \
-            --parameter-overrides \
-              DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
-              MysqlDbPass=${{ secrets.MYSQL_DB_PASS }}
+          --template-file aws/ecs-deploy.yml \
+          --stack-name ecs-stack \
+          --capabilities CAPABILITY_NAMED_IAM \
+          --parameter-overrides \
+            DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
+            MysqlDbPass=${{ secrets.MYSQL_DB_PASS }}
