@@ -38,12 +38,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Retrieve VPC stack outputs
-        id: vpc-outputs
-        run: |
-          VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
-          echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
-
       - name: Deploy RDS
         run: |
           aws cloudformation deploy \
@@ -51,7 +45,6 @@ jobs:
             --stack-name rds-stack \
             --capabilities CAPABILITY_NAMED_IAM \
             --parameter-overrides \
-              VPCID=${{ env.VPC_ID }} \
               DBNAME=${{ vars.MYSQL_DB_NAME }} \
               DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
               DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}

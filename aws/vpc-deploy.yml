@@ -41,6 +41,7 @@ Resources:
 
 Outputs:
   VPCId:
+    Description: The ID of the VPC
     Value: !Ref VPC
     Export:
-      Name: VPCId
+      Name: VPCId 

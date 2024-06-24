@@ -14,17 +14,13 @@ Parameters:
     Type: String
     NoEcho: true
 
-  VPCID:
-    Type: AWS::EC2::VPC::Id
-    Description: The VPC ID for the RDS
-
 Resources:
 
   DBSecurityGroup:
-      Type: AWS::EC2::SecurityGroup
-      Properties:
-          GroupDescription: Security group for MySQL DB Instance
-          VpcId: !Ref VPCID
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for MySQL DB Instance
+      VpcId: !ImportValue VPCId
           SecurityGroupIngress:
               - IpProtocol: tcp
                 FromPort: 3306
