@@ -14,6 +14,14 @@ Parameters:
     Type: String
     NoEcho: true
 
+  BinanceTestNetKey:
+    Type: String
+    NoEcho: true
+
+  BinanceTestNetSecret:
+    Type: String
+    NoEcho: true
+
 Resources:
   ECSCluster:
     Type: "AWS::ECS::Cluster"
@@ -69,14 +77,18 @@ Resources:
               Value: "['localhost', '127.0.0.1', '0.0.0.0']"
             - Name: MYSQL_DB_HOST
               Value: !ImportValue MySqlDBEndpoint
+            - Name: MYSQL_DB_PORT
+              Value: !ImportValue MySqlDBPort
             - Name: MYSQL_DB_NAME
               Value: "trader"
             - Name: MYSQL_DB_USER
               Value: "admin"
             - Name: MYSQL_DB_PASS
               Value: !Ref "MysqlDbPass"
-            - Name: MYSQL_DB_PORT
-              Value: !ImportValue MySqlDBPort
+            - Name: BINANCE_TSTNET_KEY
+              Value: !Ref "BinanceTestNetKey"
+            - Name: BINANCE_TSTNET_SECRET
+              Value: !Ref "BinanceTestNetSecret"
 
   ECSService:
     Type: "AWS::ECS::Service"
