@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'app/**'
-      - 'Dockerfile.prod'
+      - 'Dockerfile'
       - 'requirements.txt'
       - 'nginx.conf'
       - 'default.conf'
