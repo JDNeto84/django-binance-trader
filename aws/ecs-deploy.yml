@@ -4,7 +4,7 @@ Description: "ECS Cluster for Django App"
 Parameters:
   DockerImage:
     Type: String
-    Default: "jdneto84/django-binance-trader:latest"
+    Default: jdneto84/django-binance-trader:latest
 
   DjangoSecretKey:
     Type: String
