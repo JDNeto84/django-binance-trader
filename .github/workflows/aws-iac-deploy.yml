@@ -20,14 +20,6 @@ jobs:
       - name: Deploy VPC
         run: |
           aws cloudformation deploy --template-file aws/vpc-deploy.yml --stack-name vpc-stack --capabilities CAPABILITY_NAMED_IAM
-
-      - name: Get VPC Outputs
-        id: vpc-outputs
-        run: |
-          echo "VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)" >> $GITHUB_ENV
-          echo "SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text)" >> $GITHUB_ENV
-          echo "variable from shell environment : $VPC_ID"
-          echo "variable from shell environment : $SUBNET_ID"
   
   deploy-rds:
     needs: deploy-vpc
@@ -43,17 +35,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Retrieve VPC stack outputs
+        id: vpc-outputs
+        run: |
+          VPC_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
+          SUBNET_ID=$(aws cloudformation describe-stacks --stack-name vpc-stack --query "Stacks[0].Outputs[?OutputKey=='SubnetId'].OutputValue" --output text)
+          echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
+          echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_ENV
+
       - name: Deploy RDS
         run: |
-          echo "variable from shell environment :$VPC_ID"
-          echo "variable from shell environment : $SUBNET_ID"
           echo "aws cloudformation deploy --template-file aws/rds-deploy.yml --stack-name rds-stack --capabilities CAPABILITY_NAMED_IAM --parameter-overrides VPCID=${{ env.VPC_ID }} DBNAME=${{ vars.MYSQL_DB_NAME }} DBUSERNAME=${{ vars.MYSQL_DB_USER }} DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}"
 
-      - name: Get RDS Outputs
-        id: rds-outputs
-        run: |
-          echo "RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name rds-stack --query "Stacks[0].Outputs[?OutputKey=='MySqlDBEndpoint'].OutputValue" --output text)" >> $GITHUB_ENV
-          echo $RDS_ENDPOINT
   deploy-ecs:
     needs: deploy-rds 
     runs-on: ubuntu-latest
@@ -64,6 +57,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Retrieve RDS stack outputs
+        id: rds-outputs 
+        run: |
+          RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name rds-stack --query "Stacks[0].Outputs[?OutputKey=='MySqlDBEndpoint'].OutputValue" --output text)
+          echo "RDS_ENDPOINT=$RDS_ENDPOINT" >> $GITHUB_ENV
 
       - name: Deploy ECS
         run: |
