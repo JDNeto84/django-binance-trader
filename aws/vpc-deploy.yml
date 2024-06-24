@@ -11,14 +11,22 @@ Resources:
       Tags:
         - Key: Name
           Value: DBT-VPC
-  
-  Subnet:
+
+  Subnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
       AvailabilityZone: !Select [0, !GetAZs ""]
+
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [1, !GetAZs ""]
   
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -41,7 +49,16 @@ Resources:
 
 Outputs:
   VPCId:
-    Description: The ID of the VPC
     Value: !Ref VPC
     Export:
-      Name: VPCId 
+      Name: VPCId
+  
+  SubnetId1:
+    Value: !Ref Subnet1
+    Export:
+      Name: SubnetId1
+  
+  SubnetId2:
+    Value: !Ref Subnet2
+    Export:
+      Name: SubnetId2

@@ -88,7 +88,8 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           Subnets:
-            - !ImportValue SubnetId
+            - !ImportValue SubnetId1
+            - !ImportValue SubnetId2
           SecurityGroups:
             - !ImportValue SecurityGroupId
           AssignPublicIp: "ENABLED"
@@ -97,9 +98,9 @@ Outputs:
   ECSClusterName:
     Value: !Ref ECSCluster
     Export:
-      Name: "ECSClusterName"
+      Name: ECSClusterName
 
   ECSServiceName:
     Value: !Ref ECSService
     Export:
-      Name: "ECSServiceName"
+      Name: ECSServiceName
