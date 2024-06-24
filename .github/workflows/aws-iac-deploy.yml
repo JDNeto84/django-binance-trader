@@ -20,10 +20,10 @@ jobs:
       - name: Deploy VPC
         run: |
           aws cloudformation deploy \
-          --template-file aws/vpc-deploy.yml \
-          --stack-name vpc-stack \
-          --capabilities CAPABILITY_NAMED_IAM
-  
+            --template-file aws/vpc-deploy.yml \
+            --stack-name vpc-stack \
+            --capabilities CAPABILITY_NAMED_IAM
+
   deploy-rds:
     needs: deploy-vpc
     runs-on: ubuntu-latest
@@ -41,13 +41,13 @@ jobs:
       - name: Deploy RDS
         run: |
           aws cloudformation deploy \
-          --template-file aws/rds-deploy.yml \
-          --stack-name rds-stack \
-          --capabilities CAPABILITY_NAMED_IAM \
-          --parameter-overrides \
-            DBNAME=${{ vars.MYSQL_DB_NAME }} \
-            DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
-            DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
+            --template-file aws/rds-deploy.yml \
+            --stack-name rds-stack \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              DBNAME=${{ vars.MYSQL_DB_NAME }} \
+              DBUSERNAME=${{ vars.MYSQL_DB_USER }} \
+              DBPASSWORD=${{ secrets.MYSQL_DB_PASS }}
 
       - name: Wait for RDS stack complete
         run: aws cloudformation wait stack-create-complete --stack-name rds-stack
@@ -56,6 +56,9 @@ jobs:
     needs: deploy-rds 
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -66,9 +69,9 @@ jobs:
       - name: Deploy ECS
         run: |
           aws cloudformation deploy \
-          --template-file aws/ecs-deploy.yml \
-          --stack-name ecs-stack \
-          --capabilities CAPABILITY_NAMED_IAM \
-          --parameter-overrides \
-            DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
-            MysqlDbPass=${{ secrets.MYSQL_DB_PASS }}
+            --template-file aws/ecs-deploy.yml \
+            --stack-name ecs-stack \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              DjangoSecretKey=${{ secrets.DJANGO_SECRET_KEY }} \
+              MysqlDbPass=${{ secrets.MYSQL_DB_PASS }}
