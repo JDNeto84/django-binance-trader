@@ -62,3 +62,8 @@ Outputs:
     Value: !Ref Subnet2
     Export:
       Name: SubnetId2
+
+  SecurityGroupId:
+      Value: !Ref SecurityGroup
+      Export:
+        Name: SecurityGroupId
