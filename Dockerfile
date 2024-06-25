@@ -16,6 +16,7 @@ RUN apk update && \
     libffi-dev \
     nginx \
     openssl \
+    bash \
     curl
 
 COPY requirements.txt /app/
