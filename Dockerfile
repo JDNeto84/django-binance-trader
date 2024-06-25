@@ -16,7 +16,7 @@ RUN apk update && \
     libffi-dev \
     nginx \
     openssl \
-    bash
+    curl
 
 COPY requirements.txt /app/
 RUN pip install --upgrade pip && \
@@ -30,4 +30,4 @@ RUN /bin/sh /app/generate_cert.sh
 RUN chmod +x /app/entrypoint.sh
 EXPOSE 443 8000
 
-ENTRYPOINT ["/bin/sh", "-c", "/app/entrypoint.sh & nginx -g 'daemon off;'"]
+ENTRYPOINT ["/bin/sh", "-c", ". /app/entrypoint.sh & nginx -g 'daemon off;'"]

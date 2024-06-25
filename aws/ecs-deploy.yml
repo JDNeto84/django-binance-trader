@@ -74,7 +74,7 @@ Resources:
             - Name: DJANGO_DB_ENGINE
               Value: "mysql"
             - Name: DJANGO_ALLOWED_HOSTS
-              Value: "['localhost', '127.0.0.1', '0.0.0.0']"
+              Value: "*"
             - Name: MYSQL_DB_HOST
               Value: !ImportValue MySqlDBEndpoint
             - Name: MYSQL_DB_PORT
