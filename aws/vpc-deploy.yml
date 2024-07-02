@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "VPC, Subnets and Security Groups"
+Description: "VPC, Subnets, Security Groups, and Internet Gateway"
 
 Resources:
   VPC:
@@ -11,6 +11,34 @@ Resources:
       Tags:
         - Key: Name
           Value: DBT-VPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: DBT-InternetGateway
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: DBT-RouteTable
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
 
   Subnet1:
     Type: AWS::EC2::Subnet
@@ -27,7 +55,19 @@ Resources:
       CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: true
       AvailabilityZone: !Select [1, !GetAZs ""]
-  
+
+  Subnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref Subnet1
+      RouteTableId: !Ref RouteTable
+
+  Subnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref Subnet2
+      RouteTableId: !Ref RouteTable
+
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -52,18 +92,18 @@ Outputs:
     Value: !Ref VPC
     Export:
       Name: VPCId
-  
+
   SubnetId1:
     Value: !Ref Subnet1
     Export:
       Name: SubnetId1
-  
+
   SubnetId2:
     Value: !Ref Subnet2
     Export:
       Name: SubnetId2
 
   SecurityGroupId:
-      Value: !Ref SecurityGroup
-      Export:
-        Name: SecurityGroupId
+    Value: !Ref SecurityGroup
+    Export:
+      Name: SecurityGroupId
