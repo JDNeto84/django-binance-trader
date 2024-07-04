@@ -1,0 +1,55 @@
+name: Deploy Make Migrations DB
+
+on:
+    workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Run Migrations in ECS
+        run: |
+          task_id=$(aws ecs list-tasks \
+            --cluster DjangoECSCluster \
+            --service-name <service_name> \
+            --query "taskArns[0]" \
+            --output text)
+          
+          aws ecs execute-command \
+            --cluster DjangoECSCluster \
+            --task $task_id \
+            --container dbt-container \
+            --interactive \
+            --command "python manage.py makemigrations core"
+          
+          aws ecs execute-command \
+            --cluster DjangoECSCluster \
+            --task $task_id \
+            --container dbt-container \
+            --interactive \
+            --command "python manage.py migrate core"
+
+          aws ecs execute-command \
+            --cluster DjangoECSCluster \
+            --task $task_id \
+            --container dbt-container \
+            --interactive \
+            --command "python manage.py makemigrations"
+          
+          aws ecs execute-command \
+            --cluster DjangoECSCluster \
+            --task $task_id \
+            --container dbt-container \
+            --interactive \
+            --command "python manage.py migrate"
