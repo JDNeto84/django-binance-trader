@@ -4,8 +4,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ['true', '1', 't']
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
-
+# ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',') // Disabled to not initially use an EBS in AWS
+ALLOWED_HOSTS = ['*']
 ROOT_URLCONF = 'core.interface.urls'
 AUTH_USER_MODEL = 'core.CustomUser'
 LOGIN_REDIRECT_URL = '/profile/'

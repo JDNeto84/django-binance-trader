@@ -10,6 +10,6 @@ if [ -z "$DJANGO_SECRET_KEY" ]; then
 fi
 
 export DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
-export DJANGO_ALLOWED_HOSTS=$PUBLIC_IP
+# export DJANGO_ALLOWED_HOSTS=$PUBLIC_IP      //Disabled to not initially use an EBS in AWS
 
 gunicorn --workers 3 --bind 0.0.0.0:8000 core.config.wsgi:application
