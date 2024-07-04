@@ -90,7 +90,7 @@ Resources:
             - Name: BINANCE_TSTNET_SECRET
               Value: !Ref "BinanceTestNetSecret"
           HealthCheck:
-            Command: ["CMD-SHELL", "curl -f https://localhost/index.html || exit 1"]
+            Command: ["CMD-SHELL", "curl -f http://127.0.0.1:8000 || exit 1"]
             Interval: 30
             Timeout: 5
             Retries: 3
