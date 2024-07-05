@@ -118,6 +118,7 @@ Resources:
           SecurityGroups:
             - !ImportValue SecurityGroupId
           AssignPublicIp: "ENABLED"
+      EnableExecuteCommand: true
 
 Outputs:
   ECSClusterName:
