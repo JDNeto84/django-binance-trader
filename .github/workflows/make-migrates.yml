@@ -20,11 +20,24 @@ jobs:
 
       - name: Run Migrations in ECS
         run: |
+          SERVICE_PREFIX="ecs-stack-ECSService-"
+          SERVICE_NAME=$(aws ecs list-services --cluster DjangoECSCluster --query "serviceArns[?contains(@, '$SERVICE_PREFIX')]" --output text | awk -F '/' '{print $NF}')
+          
+          if [ -z "$SERVICE_NAME" ]; then
+            echo "Service not found"
+            exit 1
+          fi
+
           task_id=$(aws ecs list-tasks \
             --cluster DjangoECSCluster \
-            --service-name <service_name> \
+            --service-name $SERVICE_NAME \
             --query "taskArns[0]" \
             --output text)
+          
+          if [ -z "$task_id" ]; then
+            echo "Task not found"
+            exit 1
+          fi
           
           aws ecs execute-command \
             --cluster DjangoECSCluster \
