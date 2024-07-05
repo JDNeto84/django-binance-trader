@@ -105,6 +105,7 @@ Resources:
   ECSService:
     Type: "AWS::ECS::Service"
     Properties:
+      ServiceName: "ecs-stack-ECSService-replica"
       Cluster: !Ref ECSCluster
       DesiredCount: 1
       LaunchType: "FARGATE"
