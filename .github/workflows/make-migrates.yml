@@ -37,6 +37,13 @@ jobs:
             --output text)
 
           echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
+          echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Debug ECS Task
+        run: |
+          echo "Debugging ECS Task"
+          echo "Task ARN: ${{ steps.find_task.outputs.task_arn }}"
+          echo "Service Name: ${{ steps.find_task.outputs.service_name }}"
 
       - name: Run Migrations (core app)
         if: steps.find_task.outputs.task_arn != ''
