@@ -38,9 +38,6 @@ Resources:
             Principal:
               Service: "ecs-tasks.amazonaws.com"
             Action: "sts:AssumeRole"
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       Policies:
         - PolicyName: "ECSTaskPolicy"
           PolicyDocument:
@@ -64,8 +61,6 @@ Resources:
       TaskRoleArn: !GetAtt ECSRole.Arn
       RuntimePlatform:
         OperatingSystemFamily: LINUX
-      EphemeralStorage:
-        SizeInGiB: 21
       ContainerDefinitions:
         - Name: "dbt-container"
           Image: !Ref "DockerImage"

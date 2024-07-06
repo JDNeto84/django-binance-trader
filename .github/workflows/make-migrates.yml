@@ -8,7 +8,7 @@ permissions:
   contents: read  
 
 jobs:
-  deploy_and_migrate:
+  deploy_make_migrate:
     runs-on: ubuntu-latest
 
     steps:
@@ -53,7 +53,7 @@ jobs:
             --task ${{ steps.find_task.outputs.task_arn }} \
             --container dbt-container \
             --interactive \
-            --command "python manage.py makemigrations core && python manage.py migrate core"
+            --command "/bin/sh -c 'python3 manage.py makemigrations core && python3 manage.py migrate core'"
 
       - name: Run Migrations (other apps)
         if: steps.find_task.outputs.task_arn != ''
@@ -63,4 +63,4 @@ jobs:
             --task ${{ steps.find_task.outputs.task_arn }} \
             --container dbt-container \
             --interactive \
-            --command "python manage.py makemigrations && python manage.py migrate"
+            --command "/bin/sh -c 'python3 manage.py makemigrations && python3 manage.py migrate'"
