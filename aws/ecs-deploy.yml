@@ -65,7 +65,7 @@ Resources:
       RuntimePlatform:
         OperatingSystemFamily: LINUX
       EphemeralStorage:
-        SizeInGiB: 20
+        SizeInGiB: 21
       ContainerDefinitions:
         - Name: "dbt-container"
           Image: !Ref "DockerImage"
