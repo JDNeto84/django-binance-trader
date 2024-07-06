@@ -1,73 +1,66 @@
 name: Deploy Make Migrations DB
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read  
 
 jobs:
-  deploy:
+  deploy_make_migrate:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::851725643108:role/allow_command_dbt
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Run Migrations in ECS
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
+      - name: Find Running ECS Task
+        id: find_task
         run: |
-          SERVICE_PREFIX="ecs-stack-ECSService-"
-          SERVICE_NAME=$(aws ecs list-services --cluster DjangoECSCluster --query "serviceArns[?contains(@, '$SERVICE_PREFIX')]" --output text | awk -F '/' '{print $NF}')
-          
-          if [ -z "$SERVICE_NAME" ]; then
-            echo "Service not found"
-            exit 1
-          fi
+          SERVICE_NAME=$(aws ecs list-services \
+            --cluster DjangoECSCluster \
+            --query "serviceArns[?contains(@, 'ecs-stack-ECSService-')]" \
+            --output text | awk -F '/' '{print $NF}')
 
-          task_id=$(aws ecs list-tasks \
+          TASK_ARN=$(aws ecs list-tasks \
             --cluster DjangoECSCluster \
             --service-name $SERVICE_NAME \
+            --desired-status RUNNING \
             --query "taskArns[0]" \
             --output text)
-          
-          if [ -z "$task_id" ]; then
-            echo "Task not found"
-            exit 1
-          fi
-          
-          aws ecs execute-command \
-            --cluster DjangoECSCluster \
-            --task $task_id \
-            --container dbt-container \
-            --interactive \
-            --command "python manage.py makemigrations core"
-          
-          aws ecs execute-command \
-            --cluster DjangoECSCluster \
-            --task $task_id \
-            --container dbt-container \
-            --interactive \
-            --command "python manage.py migrate core"
 
+          echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
+          echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Debug ECS Task
+        run: |
+          echo "Debugging ECS Task"
+          echo "Task ARN: ${{ steps.find_task.outputs.task_arn }}"
+          echo "Service Name: ${{ steps.find_task.outputs.service_name }}"
+
+      - name: Run Migrations (core app)
+        if: steps.find_task.outputs.task_arn != ''
+        run: |
           aws ecs execute-command \
             --cluster DjangoECSCluster \
-            --task $task_id \
+            --task ${{ steps.find_task.outputs.task_arn }} \
             --container dbt-container \
             --interactive \
-            --command "python manage.py makemigrations"
-          
+            --command "/bin/sh -c 'python3 manage.py makemigrations core && python3 manage.py migrate core'"
+
+      - name: Run Migrations (other apps)
+        if: steps.find_task.outputs.task_arn != ''
+        run: |
           aws ecs execute-command \
             --cluster DjangoECSCluster \
-            --task $task_id \
+            --task ${{ steps.find_task.outputs.task_arn }} \
             --container dbt-container \
             --interactive \
-            --command "python manage.py migrate"
+            --command "/bin/sh -c 'python3 manage.py makemigrations && python3 manage.py migrate'"

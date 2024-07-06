@@ -59,6 +59,8 @@ Resources:
       NetworkMode: "awsvpc"
       ExecutionRoleArn: !GetAtt ECSRole.Arn
       TaskRoleArn: !GetAtt ECSRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
       ContainerDefinitions:
         - Name: "dbt-container"
           Image: !Ref "DockerImage"
