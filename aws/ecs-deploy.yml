@@ -66,6 +66,7 @@ Resources:
           PortMappings:
             - ContainerPort: 443
             - ContainerPort: 8000
+          EnableExecuteCommand: true
           Environment:
             - Name: DJANGO_SECRET_KEY
               Value: !Ref "DjangoSecretKey"
