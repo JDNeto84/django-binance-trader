@@ -10,9 +10,10 @@ ROOT_URLCONF = 'core.interface.urls'
 AUTH_USER_MODEL = 'core.CustomUser'
 LOGIN_REDIRECT_URL = '/profile/'
 LOGIN_URL = '/login/'
-DIR_TEMPLATES = os.path.join(BASE_DIR, 'templates')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+DIR_TEMPLATES = os.path.join(BASE_DIR, 'templates')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
