@@ -38,6 +38,9 @@ Resources:
             Principal:
               Service: "ecs-tasks.amazonaws.com"
             Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       Policies:
         - PolicyName: "ECSTaskPolicy"
           PolicyDocument:
@@ -59,6 +62,10 @@ Resources:
       NetworkMode: "awsvpc"
       ExecutionRoleArn: !GetAtt ECSRole.Arn
       TaskRoleArn: !GetAtt ECSRole.Arn
+      RuntimePlatform:
+        OperatingSystemFamily: LINUX
+      EphemeralStorage:
+        SizeInGiB: 20
       ContainerDefinitions:
         - Name: "dbt-container"
           Image: !Ref "DockerImage"
@@ -66,7 +73,6 @@ Resources:
           PortMappings:
             - ContainerPort: 443
             - ContainerPort: 8000
-          EnableExecuteCommand: true
           Environment:
             - Name: DJANGO_SECRET_KEY
               Value: !Ref "DjangoSecretKey"
