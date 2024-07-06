@@ -38,6 +38,9 @@ Resources:
             Principal:
               Service: "ecs-tasks.amazonaws.com"
             Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       Policies:
         - PolicyName: "ECSTaskPolicy"
           PolicyDocument:
