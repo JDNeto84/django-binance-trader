@@ -2,3 +2,4 @@ binance-connector==3.7.0
 Django==5.0.6
 gunicorn==22.0.0
 mysqlclient==2.2.4
+cryptography==42.0.8

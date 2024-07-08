@@ -1,5 +1,5 @@
 <div class="col-md-8">
-    <form method="post">
+    <form method="post" action="{% url 'update_keys' %}">
         {% csrf_token %}
         <div class="form-row">
             <div class="form-group col-md-6">
@@ -14,13 +14,16 @@
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="api_key">API Key</label>
-                <input type="text" class="form-control" id="api_key" placeholder="Your API Key">
+                <input type="text" class="form-control" id="api_key" name="api_key" placeholder="Your API Key">
             </div>
             <div class="form-group col-md-6">
-                <label for="secrets_key">Secrets Key</label>
-                <input type="text" class="form-control" id="secrets_key" placeholder="Your Secrets Key">
+                <label for="secret_key">Secret Key</label>
+                <input type="text" class="form-control" id="secret_key" name="secret_key" placeholder="Your Secret Key">
             </div>
         </div>
         <button type="submit" class="btn btn-primary btn-submit">Submit</button>
     </form>
+    {% if error %}
+        <div class="alert alert-danger mt-3">{{ error }}</div>
+    {% endif %}
 </div>
