@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
@@ -8,7 +9,11 @@ from django.utils.decorators import method_decorator
 
 user_repository = UserRepository()
 auth_service = AuthenticationService(user_repository)
-binance_service = BinanceService(user_repository)
+testnet_base_url = "https://testnet.binance.vision"
+binance_service = BinanceService(user_repository, base_url=testnet_base_url)
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 class LoginView(View):
     def get(self, request):
@@ -54,9 +59,9 @@ class UpdateKeysView(View):
 class UserBalancesView(View):
     def get(self, request):
         try:
-            balances = binance_service.get_user_balances(request.user.username)
-            return render(request, 'balances/balances.html', {'balances': balances})
+            return render(request, 'balances/balances.html')
         except Exception as e:
+            logger.error(f"Error fetching balances: {e}")
             return render(request, 'balances/balances.html', {'error': str(e)})
 
 @method_decorator(login_required, name='dispatch')
@@ -66,6 +71,7 @@ class UserBalancesPartialView(View):
             balances = binance_service.get_user_balances(request.user.username)
             return render(request, 'balances/partials/balances_list.html', {'balances': balances})
         except Exception as e:
+            logger.error(f"Error fetching balances: {e}")
             return JsonResponse({'error': str(e)}, status=500)
 
 @method_decorator(login_required, name='dispatch')
@@ -78,6 +84,7 @@ class CreateMarketOrderView(View):
             order = binance_service.create_market_order(request.user.username, symbol, side, quantity)
             return JsonResponse(order)
         except Exception as e:
+            logger.error(f"Error creating market order: {e}")
             return JsonResponse({'error': str(e)}, status=500)
 
 def home(request):

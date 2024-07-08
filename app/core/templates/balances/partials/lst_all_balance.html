@@ -1,0 +1,35 @@
+{% if balances_data %}
+<div class="container mt-3">
+  <h2>Saldos da Conta</h2>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3">
+    {% for asset, balance in balances_data.items %}
+    <div class="col">
+      <div class="card h-100 d-flex flex-column justify-content-center" style="background-color: #f8f9fa;">
+        <div class="card-body text-center">
+          <div class="row mb-2">
+            <div class="col-12">
+              <h6 class="card-title">{{ asset }}</h6>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <span class="badge bg-success">Livre: {{ balance.free }}</span>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-12">
+              <span class="badge bg-primary">Bloqueado: {{ balance.locked }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="container mt-3">
+  <h4>Não há saldos para exibir.</h4>
+</div>
+{% endif %}
+
