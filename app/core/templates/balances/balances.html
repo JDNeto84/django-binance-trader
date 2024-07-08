@@ -1,0 +1,12 @@
+{% extends 'base/layout.html' %}
+{% load static %}
+{% block title %}User Balances{% endblock %}
+{% block h1 %}Your Balances{% endblock %}
+{% block content %}
+    <div id="balances-container" hx-get="{% url 'user_balances_partial' %}" hx-trigger="load">
+
+    </div>
+    <div id="order-form-container">
+        {% include 'partials/order_form.html' %}
+    </div>
+{% endblock %}

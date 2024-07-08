@@ -1,0 +1,18 @@
+<form id="order-form" hx-post="{% url 'create_market_order' %}" hx-target="#order-form-container" hx-swap="innerHTML">
+    <div class="form-group">
+        <label for="symbol">Symbol</label>
+        <input type="text" class="form-control" id="symbol" name="symbol" placeholder="e.g. BTCUSDT">
+    </div>
+    <div class="form-group">
+        <label for="side">Side</label>
+        <select class="form-control" id="side" name="side">
+            <option value="BUY">Buy</option>
+            <option value="SELL">Sell</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" step="0.00001" class="form-control" id="quantity" name="quantity" placeholder="e.g. 0.01">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Order</button>
+</form>
