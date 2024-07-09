@@ -1,0 +1,9 @@
+{% extends 'base/layout.html' %}
+{% load static %}
+{% block title %}User Order{% endblock %}
+{% block h1 %}Your Order{% endblock %}
+{% block row %}
+    
+    {% include 'orders/partials/order_form.html' %}
+
+{% endblock %}

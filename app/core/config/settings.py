@@ -12,7 +12,6 @@ LOGIN_REDIRECT_URL = '/profile/'
 LOGIN_URL = '/login/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DIR_TEMPLATES = os.path.join(BASE_DIR, 'templates')
 
 INSTALLED_APPS = [
