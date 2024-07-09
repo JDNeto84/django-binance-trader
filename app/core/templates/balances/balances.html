@@ -3,10 +3,32 @@
 {% block title %}User Balances{% endblock %}
 {% block h1 %}Your Balances{% endblock %}
 {% block row %}
-<div id="balances-container" hx-get="{% url 'user_balances_partial' %}" hx-trigger="load">
+<div>
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Asset</th>
+                <th>Free</th>
+                <th>Locked</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for balance in balances %}
+                <tr>
+                    <td>{{ balance.asset }}</td>
+                    <td>{{ balance.free }}</td>
+                    <td>{{ balance.locked }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
 
 </div>
-<div id="order-form-container">
-    {% include 'balances/partials/order_form.html' %}
-</div>
+    
 {% endblock %}

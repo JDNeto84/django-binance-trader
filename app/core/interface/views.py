@@ -59,7 +59,9 @@ class UpdateKeysView(View):
 class UserBalancesView(View):
     def get(self, request):
         try:
-            return render(request, 'balances/balances.html')
+            balances = binance_service.get_user_balances(request.user.username)
+            return render(request, 'balances/balances.html', {'balances': balances})
+            
         except Exception as e:
             logger.error(f"Error fetching balances: {e}")
             return render(request, 'balances/balances.html', {'error': str(e)})
@@ -86,6 +88,15 @@ class CreateMarketOrderView(View):
         except Exception as e:
             logger.error(f"Error creating market order: {e}")
             return JsonResponse({'error': str(e)}, status=500)
+
+@method_decorator(login_required, name='dispatch')
+class UserOrdersView(View):
+    def get(self, request):
+        try:
+            return render(request, 'orders/orders.html')
+        except Exception as e:
+            logger.error(f"Error fetching orders: {e}")
+            return render(request, 'orders/orders.html', {'error': str(e)})
 
 def home(request):
     return render(request, 'index.html')
