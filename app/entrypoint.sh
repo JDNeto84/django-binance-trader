@@ -12,4 +12,6 @@ fi
 export DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
 # export DJANGO_ALLOWED_HOSTS=$PUBLIC_IP      //Disabled to not initially use an EBS in AWS
 
-gunicorn --workers 3 --bind 0.0.0.0:8000 core.config.wsgi:application
+gunicorn --workers 3 --bind 0.0.0.0:8000 core.config.wsgi:application &
+
+daphne -b 0.0.0.0 -p 8001 core.config.asgi:application

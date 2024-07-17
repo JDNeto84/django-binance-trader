@@ -1,0 +1,33 @@
+<div class="container">
+    <h1>WebSocket Connection Status: <span class="badge badge-secondary" id="status">Not Connected</span></h1></br>
+    <h2>Data Received:</h2>
+    <pre id="data" class="alert alert-light border"></pre>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ws = new WebSocket("ws://localhost:8001/ws/");
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log("Received: ", data);
+            document.getElementById("data").textContent = JSON.stringify(data, null, 2);
+        };
+
+        ws.onerror = function(event) {
+            console.error("WebSocket error: ", event);
+        };
+
+        ws.onopen = function(event) {
+            console.log("Connected to WebSocket");
+            document.getElementById("status").className = "badge badge-success";
+            document.getElementById("status").textContent = "Connected";
+        };
+
+        ws.onclose = function(event) {
+            console.log("WebSocket closed");
+            document.getElementById("status").className = "badge badge-danger";
+            document.getElementById("status").textContent = "Disconnected";
+        };
+    });
+</script>

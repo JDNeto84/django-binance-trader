@@ -16,8 +16,7 @@ services:
       MYSQL_DB_PASS: ${MYSQL_DB_PASS}
       MYSQL_DB_PORT: ${MYSQL_DB_PORT}
       BINANCE_TSTNET_URL: ${BINANCE_TSTNET_URL}
-      BINANCE_TSTNET_KEY: ${BINANCE_TSTNET_KEY}
-      BINANCE_TSTNET_SECRET: ${BINANCE_TSTNET_SECRET}
+      BINANCE_WS_BTCUSDT: ${BINANCE_WS_BTCUSDT}
       
     volumes:
       - ./app:/app
@@ -26,6 +25,7 @@ services:
     ports:
       - "443:443"
       - "8000:8000"
+      - "8001:8001"
     depends_on:
       - mysql
 
