@@ -13,6 +13,7 @@ LOGIN_URL = '/login/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 DIR_TEMPLATES = os.path.join(BASE_DIR, 'templates')
+WS_BTCUSDT="wss://testnet.binance.vision/ws/btcusdt@bookTicker"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +54,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.config.wsgi.application'
+ASGI_APPLICATION = 'core.config.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 DB_ENGINE = os.getenv('DJANGO_DB_ENGINE')
 DB_USER = os.getenv('MYSQL_DB_USER')

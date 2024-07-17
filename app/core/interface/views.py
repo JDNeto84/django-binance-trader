@@ -97,9 +97,22 @@ class UserOrdersView(View):
         except Exception as e:
             logger.error(f"Error fetching orders: {e}")
             return render(request, 'orders/orders.html', {'error': str(e)})
+        
+@method_decorator(login_required, name='dispatch')     
+def CheckInputOrder(request):
+    quantity_str = request.GET.get('quantity', '')     
+    try:
+        quantity = float(quantity_str)  
+        is_valid = quantity >= 0.00001
+    except ValueError:  
+        is_valid = False
+    return render(request, 'orders/partials/check_input_order.html', {'is_valid': is_valid})
 
 def home(request):
     return render(request, 'index.html')
+
+def monitor(request):
+    return render(request, 'monitor/monitor.html')
 
 @login_required
 def profile_view(request):
