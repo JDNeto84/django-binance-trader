@@ -71,6 +71,7 @@ Resources:
           PortMappings:
             - ContainerPort: 443
             - ContainerPort: 8000
+            - ContainerPort: 8001
           Environment:
             - Name: DJANGO_SECRET_KEY
               Value: !Ref "DjangoSecretKey"
@@ -95,7 +96,7 @@ Resources:
             - Name: BINANCE_TSTNET_SECRET
               Value: !Ref "BinanceTestNetSecret"
           HealthCheck:
-            Command: ["CMD-SHELL", "curl -f http://127.0.0.1:8000 || exit 1"]
+            Command: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/monitor || exit 1"]
             Interval: 30
             Timeout: 5
             Retries: 3
