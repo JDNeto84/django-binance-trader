@@ -29,6 +29,5 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 RUN chmod +x /app/generate_cert.sh 
 RUN /bin/sh /app/generate_cert.sh
 RUN chmod +x /app/entrypoint.sh
-EXPOSE 443 8000
-
+EXPOSE 443 8000 8001
 ENTRYPOINT ["/bin/sh", "-c", ". /app/entrypoint.sh & nginx -g 'daemon off;'"]
